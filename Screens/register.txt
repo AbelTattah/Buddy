@@ -1,0 +1,167 @@
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  TextInput,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import styles from "../store/Styling/styles"; // Importing the styles from the styles file
+import { useState } from "react"; // Importing the useState and useEffect component from react
+import { setDoc, doc } from "firebase/firestore"; // Importing the setDoc and doc from firebase/firestore
+import { db } from "../firebase"; // Importing the db from the firebase
+import { useFonts } from "expo-font"; // Importing the useFonts from expo-font
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Register component
+export default function Register({ navigation }) {
+  const [sid, setSid] = useState(0); // Student ID state
+  const [nameid, setNameid] = useState(""); // Name state
+  const [pass, setPass] = useState(""); // Password state
+  const [pass1, setPass1] = useState(""); // Confirm password state
+  const [email, setEmail] = useState(""); // Email state
+  const [regg, setRegg] = useState("rnd"); // Registration state
+  const [sign, setSign] = useState(false); // Sign up state
+
+  // function to create user collection in firestore
+  async function createUserCollection() {
+    try {
+      // Add a new document in collection "users"
+      const docRef = await setDoc(doc(db, "users", `user/buddy/${email}`), {
+        SNAME: nameid,
+      });
+      console.log(docRef.response);
+      console.log("Document written with ID: ", email);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+
+// function to sign up user
+async function signUp () {
+  if (pass1 == pass && email !== '' && nameid != '') {
+    const response = await axios.post (
+      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
+        process.env.FIREBASE_KEY,
+      {
+        email: email,
+        password: pass,
+        returnSecureToken: true,
+      }
+    );
+    if (response.status == 200) {
+      createUserCollection ();
+      AsyncStorage.setItem('token',response.idToken)
+      // Set registration state
+      setRegg ('inp');
+      // Set registration state
+      setTimeout (() => {
+        setRegg ('succ');
+      }, 3000);
+      // Navigate to login page
+      setTimeout (() => {
+        navigation.navigate ('Login');
+      }, 4500);
+    } else {
+      // Handle errors
+      const errorMessage = response.message;
+      console.log (errorMessage);
+      if (errorMessage === 'Firebase: Error (auth/network-request-failed).') {
+        setSign (false);
+      } else if (
+        errorMessage === 'Firebase: Error (auth/email-already-in-use).'
+      ) {
+        setSign (true);
+      }
+
+      if (sign === true) {
+        setRegg ('prob');
+      } else if (sign === false) {
+        setRegg ('prob1');
+      } else {
+        setRegg ('prob1');
+      }
+    }
+  } else {
+    setRegg ('prob2');
+  }
+}
+
+  // Load fonts
+  const [fontsLoaded] = useFonts({
+    FredokaBold: require("../fonts/FredokaBold.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator />;
+  }
+
+  return (
+    <View style={styles.ReggMain}>
+      <Text style={styles.ReggLogoText}>Sign Up for Buddy</Text>
+      <KeyboardAvoidingView style={styles.ReggIn} behavior="padding">
+        {/* Sign up inputs */}
+        <TextInput
+          style={styles.ReggTextIn}
+          inputMode="email"
+          placeholder="    email"
+          autoCapitalize="none"
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          secureTextEntry
+          style={styles.ReggTextIn}
+          placeholder="    password"
+          autoCapitalize="none"
+          onChangeText={(text) => setPass(text)}
+        />
+        <TextInput
+          secureTextEntry
+          style={styles.ReggTextIn}
+          placeholder="    confirm password"
+          autoCapitalize="none"
+          onChangeText={(text) => setPass1(text)}
+        />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        style={styles.regCheckmain}
+        keyboardShouldPersistTaps="always"
+      >
+        <View style={styles.ReggButtonView}>
+          <TouchableOpacity style={styles.loginButton} onPress={() => signUp()}>
+            <Text style={styles.loginButtonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+        <>
+          {regg === "inp" ? (
+            <>
+              <Text>
+                Signing you up... <ActivityIndicator color="#2407f2" />
+              </Text>
+            </>
+          ) : regg === "prob" ? (
+            <>
+              <Text>You have an account</Text>
+            </>
+          ) : regg === "prob1" ? (
+            <>
+              <Text>A Network error occured</Text>
+            </>
+          ) : regg === "prob2" ? (
+            <Text>The form is not complete</Text>
+          ) : regg === "succ" ? (
+            <>
+              <Text>Sign Up Succesful ,Go to login Page!</Text>
+            </>
+          ) : (
+            <>
+              <Text>Buddy v.1.0</Text>
+            </>
+          )}
+        </>
+      </KeyboardAvoidingView>
+    </View>
+  );
+}
