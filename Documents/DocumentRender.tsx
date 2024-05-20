@@ -9,7 +9,7 @@ const DocumentRenderer = ({ navigation }:any) => {
   const context = useContext(userContext)
   return (
       <PdfComp
-        url={`https://buddy-backend-ti17.onrender.com/pdf/${context.pdf}`}
+        url={`${context.pdf}`}
       />
   )
 }

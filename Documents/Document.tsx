@@ -15,20 +15,6 @@ import { userContext } from "../store/user";
 
 import DocumentRender from "./DocumentRender";
 
-/*
-
-This is the page that displays the past questions for the user to select from
-
-1. The user enters the course code of the past question he/she wants to view
-2. The input of the user is matched to particular array containing the api enpoints
-of the course code he or she entered.
-3. This array containing the endpoints is obtained from the api when the past question is searched for
-4. The each endpoint is matched to a state which is used to render the pdf
-
-The list of past questions relating to that particular course will be displayed in a list when the
-steps above are completed.
-
-*/
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +23,7 @@ const Documents = ({ navigation }:any) => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [endpoints, setEndpoints] = useState([]);
+  const [titles, setTitles] = useState([]);
 
   const context = useContext(userContext);
 
@@ -44,10 +31,13 @@ const Documents = ({ navigation }:any) => {
   async function getEndpoints(couseCode:string) {
     try {
       console.log(code);
-      const response = await axios.get(
-        `https://buddy-backend-ti17.onrender.com/pasco/get/${code}`
+      const response = await axios.post(
+        `https://buddy-zpdh.onrender.com/geturl`, {
+          "keywords":code
+        }
       );
-      setEndpoints(response.data.endPoints);
+      setEndpoints(response.data.links);
+      setTitles(response.data.titles);
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -149,7 +139,7 @@ const Documents = ({ navigation }:any) => {
                     gap: 20,
                   }}
                 >
-                  {endpoints.map((endpoint, i) => (
+                  {titles.map((endpoint, i) => (
                     <TouchableOpacity
                       key={i}
                       style={{
@@ -165,7 +155,7 @@ const Documents = ({ navigation }:any) => {
                         marginRight: 10,
                       }}
                       onPress={() => {
-                        context.setPdf(endpoint);
+                        context.setPdf(endpoints[i]);
                         navigationHandler();
                       }}
                     >
