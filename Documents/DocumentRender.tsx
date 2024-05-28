@@ -3,7 +3,7 @@ import PdfComp from '../Components/pdf' // Importing the pdf component
 import { useContext } from 'react'
 import { userContext } from '../store/user'
 
-// Component to render past questions pdf
+// Component to the pdf
 const DocumentRenderer = ({ navigation }:any) => {
   // Render the pdf component
   const context = useContext(userContext)

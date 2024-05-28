@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native"; // Importing components from react-native
-import React, { useState, useContext } from "react"; // Importing the useState hook from react
+import React, { useState, useContext, useEffect } from "react"; // Importing the useState hook from react
 import axios from "axios"; // Importing axios
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack"; // Importing the createNativeStackNavigator from @react-navigation/stack
@@ -15,40 +15,61 @@ import { userContext } from "../store/user";
 
 import DocumentRender from "./DocumentRender";
 
+/*
+TODO: 
+
+3. Previous Searches
+1. Book Persistence
+2. Previous Books
+*/
+
 
 const Stack = createNativeStackNavigator();
+
+var titlesCache:any[] = []; 
+var endpoints:any[] = [];
+
+
 
 // Load fonts
 const Documents = ({ navigation }:any) => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [endpoints, setEndpoints] = useState([]);
-  const [titles, setTitles] = useState([]);
+  const [titles, setTitles] = useState<any[]>([]);
+  const [currentPdf, setCurrentPdf] = useState<string>("");
 
   const context = useContext(userContext);
 
+  //Pdf regex
+  const test = /pdf/
+
+
   // Get endpoints for getting pdfs from api
-  async function getEndpoints(couseCode:string) {
+  async function getEndpoints(bookCode:string) {
     try {
-      console.log(code);
       const response = await axios.post(
-        `https://buddy-zpdh.onrender.com/geturl`, {
-          "keywords":code
+        'http://207.211.176.165/buddy', {
+          "keywords":bookCode
         }
       );
-      setEndpoints(response.data.links);
-      setTitles(response.data.titles);
-      console.log(response.data);
+      // Filter pdf endpoints
+      for (var v = 0; v < response.data.links.length; v++) {
+        if (test.test(response.data.links[v])) {
+          endpoints.push(response.data.links[v])
+          titlesCache.push(response.data.titles[v])
+        }
+      }
+      
+      setTitles(titlesCache)
     } catch (error) {
-      console.log(error);
+      setTitles(["An error occured"])
     }
   }
 
   // Search for past questions
-
   const searchHandler = () => {
     setLoading(true);
-    getEndpoints("");
+    getEndpoints(code);
     setTimeout(() => {
       setLoading(false);
     }, 4000);
@@ -57,9 +78,18 @@ const Documents = ({ navigation }:any) => {
   // Navigate to pdf view
   const navigationHandler = () => {
     setTimeout(() => {
-      navigation.navigate("Document");
+      if (titles[0] !=="Not found" || titles[0] !== "An error occured")  {
+        navigation.navigate("Document",{
+          book:currentPdf
+        });
+      }
     }, 1000);
   };
+
+  useEffect(() => {
+    // Filter Endpoints
+    //filterEndpointsAndTitles();
+  },[titles]);
 
   return (
     <View
@@ -80,7 +110,7 @@ const Documents = ({ navigation }:any) => {
           marginBottom: 20,
           padding: 10,
         }}
-        placeholder="Enter course Code eg. MATH123"
+        placeholder="Enter book name"
         onChangeText={(text) => setCode(text)}
       >
         
@@ -114,8 +144,7 @@ const Documents = ({ navigation }:any) => {
             {loading ? (
               <View
                 style={{
-                  height: 300,
-                  width: 300,
+                  flex:1,
                   backgroundColor: "#fff",
                   borderRadius: 20,
                   padding: 10,
@@ -124,7 +153,7 @@ const Documents = ({ navigation }:any) => {
                   alignItems: "center",
                 }}
               >
-                <ActivityIndicator />
+                <ActivityIndicator size="large"/>
               </View>
             ) : (
               <>
@@ -139,7 +168,7 @@ const Documents = ({ navigation }:any) => {
                     gap: 20,
                   }}
                 >
-                  {titles.map((endpoint, i) => (
+                  {titles.map((title, i) => (
                     <TouchableOpacity
                       key={i}
                       style={{
@@ -155,7 +184,9 @@ const Documents = ({ navigation }:any) => {
                         marginRight: 10,
                       }}
                       onPress={() => {
+                        console.log(endpoints[i])
                         context.setPdf(endpoints[i]);
+                        setCurrentPdf(title);
                         navigationHandler();
                       }}
                     >
@@ -164,7 +195,7 @@ const Documents = ({ navigation }:any) => {
                           textAlign: "center",
                         }}
                       >
-                        {endpoint}
+                        {title}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -196,9 +227,14 @@ const DocumentNav = ({ navigation }) => {
           component={Documents} />
         <Stack.Screen
           name="Document"
-          options={{
-            title: "Document",
-          }}
+          options={
+            ({route})=>{
+              const title = route.params.book;
+              return {
+                title:title
+              }
+            }
+          }
           component={DocumentRender}
         />
       </Stack.Navigator>
@@ -207,3 +243,14 @@ const DocumentNav = ({ navigation }) => {
 };
 
 export default DocumentNav;
+
+
+
+/*
+map((item:any,index:any)=>{
+        console.log(test.test(item))
+        if(test.test(item)) {
+          return item
+        }
+      });
+*/ 
