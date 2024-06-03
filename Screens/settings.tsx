@@ -31,15 +31,15 @@ export  function Main({navigation}:any) {
       }}>Settings</Text>
       <TouchableOpacity
         style={styles.meTopButtons}
-        onPress={()=>navigation.navigate("Preferences")}
-      >
-        <Text style={styles.meTopButtonText}>Preferences</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.meTopButtons}
         onPress={()=>navigation.navigate("About")}
       >
         <Text style={styles.meTopButtonText}>About</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.meTopButtons}
+        onPress={()=>navigation.navigate("Preferences")}
+      >
+        <Text style={styles.meTopButtonText}>Preferences</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.meTopButtons}

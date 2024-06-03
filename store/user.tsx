@@ -1,11 +1,11 @@
 import { createContext, useState} from "react";
 
 export const userContext = createContext({
-    sid:0,
+    siv:false,
     name: "",
     isLoggedIn:false,
     pdf:"",
-    setSid:(sid:number)=>{},
+    setSiv:(sid:boolean)=>{},
     setName:(name:string) =>{},
     setAuthState:(auth:boolean)=>{},
     setPdf:(pdf:string)=>{}
@@ -13,13 +13,13 @@ export const userContext = createContext({
 
 
 function UserContextProvider({children}:any) {
-    const [sid,setSID] = useState(0)
+    const [siv,setSIV] = useState(false)
     const [name,setNAME] = useState("")
     const [isLoggedIn,setAUTHSTATE] = useState(false)
     const [pdf,setPDF] = useState("")
 
-    function setSid(sid:number){
-        setSID(sid)
+    function setSiv(sid:boolean){
+        setSIV(sid)
     }
 
     function setName(name:string){
@@ -35,7 +35,7 @@ function UserContextProvider({children}:any) {
     }
 
      return (
-        <userContext.Provider value={{name,setName,sid,setSid,isLoggedIn,setAuthState,pdf,setPdf}}>
+        <userContext.Provider value={{name,setName,siv,setSiv,isLoggedIn,setAuthState,pdf,setPdf}}>
             {children}
         </userContext.Provider>
     )

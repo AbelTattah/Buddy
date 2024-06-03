@@ -1,7 +1,7 @@
 import * as React from "react"; // Importing components from react
 import { NavigationContainer } from "@react-navigation/native"; // Importing the NavigationContainer from @react-navigation/native
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Button, View, Text, Image } from "react-native"; // Importing components from react-native
+import { Button, View, Text, Image,StatusBar } from "react-native"; // Importing components from react-native
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // Importing the createBottomTabNavigator from @react-navigation/bottom-tabs
 
 // Importing the styles from the styles file
@@ -24,9 +24,10 @@ const Tab = createBottomTabNavigator();
 
 // Main Application
 function App1({ navigation }:any) {
-  const { isLoggedIn } = useContext(userContext);
+  const { isLoggedIn,siv } = useContext(userContext);
   return (
     <>
+    <StatusBar hidden={siv} /> 
       {true ? (
         <NavigationContainer independent>
           <Tab.Navigator>
@@ -40,10 +41,11 @@ function App1({ navigation }:any) {
                     style={{
                       width: 25,
                       height: 25,
+                      marginLeft:50
                     }}
                   />
                 ),
-                tabBarLabelStyle: { fontSize: 14, fontFamily: "FredokaBold" },
+                tabBarLabelStyle: { marginLeft:50,fontSize: 14, fontFamily: "FredokaBold" },
                 tabBarStyle: {
                   height: 80,
                   paddingBottom: 10,
@@ -67,10 +69,11 @@ function App1({ navigation }:any) {
                     style={{
                       width: 25,
                       height: 25,
+                      marginRight:50
                     }}
                   />
                 ),
-                tabBarLabelStyle: { fontSize: 14, fontFamily: "FredokaBold" },
+                tabBarLabelStyle: { marginRight:50,fontSize: 14, fontFamily: "FredokaBold" },
                 tabBarStyle: {
                   height: 80,
                   paddingBottom: 10,
@@ -110,9 +113,10 @@ function App1({ navigation }:any) {
 }
 
 export default function App() {
+ 
   return (
     <UserContextProvider>
-      {/* <StatusBar style="dark" /> */}
+      
       <NavigationContainer>
         <Stack.Navigator>
           {/* <Stack.Screen

@@ -6,6 +6,23 @@ import axios from 'axios';
 const Feedback = () => {
   let emotion:string = '';
   const [suggestion, setSuggestion] = useState<string>()
+  const [opacites,setOpacities] = useState<any[]>([
+    1,
+    1,
+    1,
+    1
+  ])
+
+  function setOpacity(indexx:number) {
+    setOpacities(previous=>previous.map((item,index)=>{
+      if (indexx!==index) {
+        return 0.2
+      }
+      else {
+        return 1
+      }
+    }))
+  }
 
   async function sendFeedback() {
     try {
@@ -19,39 +36,73 @@ const Feedback = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>User Feedback</Text>
-      <View>
+      <View style = {styles.emojisMain}>
         <Text>What was your experience?</Text>
         <View style={styles.emojis}>
-          <TouchableOpacity onPress={() => emotion = 'sad'}>
+          <TouchableOpacity onPress={() =>{ 
+            emotion = 'sad'
+            setOpacity(0)
+            }}>
             <Image
               source={require('../../assets/sad.png')}
-              style={styles.emoji}
+              style={ {
+                width: 50,
+                height: 50,
+                marginTop:14,
+                opacity:opacites[0]
+              }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => emotion =  'dissapointed'}>
+          <TouchableOpacity onPress={() => {
+            emotion =  'dissapointed'
+            setOpacity(1)
+            }}>
             <Image
               source={require('../../assets/dissapointment.png')}
-              style={styles.emoji}
+              style={{
+                width: 50,
+                height: 50,
+                marginTop:14,
+                opacity:opacites[1]
+              }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => emotion = 'happy'}>
+          <TouchableOpacity  onPress={() => {
+            emotion =  'happy'
+            setOpacity(2)
+            }}>
             <Image
               source={require('../../assets/happy.png')}
-              style={styles.emoji}
+              style={{
+                width: 50,
+                height: 50,
+                marginTop:14,
+                opacity:opacites[2]
+              }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => emotion = 'love'}>
+          <TouchableOpacity onPress={() => {
+            emotion =  'love'
+            setOpacity(3)
+            }}>
             <Image
               source={require('../../assets/love.png')}
-              style={styles.emoji}
+              style={{
+                width: 50,
+                height: 50,
+                marginTop:14,
+                opacity:opacites[3]
+              }}
             />
           </TouchableOpacity>
         </View>
       </View>
-      <View>
+      <View style={styles.emojisMain}>
         <Text style={styles.suggestionsHeader}>Any Suggestions?</Text>
         <TextInput style={styles.suggestion}></TextInput>
-        <TouchableOpacity onPress={()=>sendFeedback()} style={styles.send}></TouchableOpacity>
+        <TouchableOpacity onPress={()=>sendFeedback()} style={styles.send}>
+          <Text style={styles.heading}>Send</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -64,32 +115,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:'#fff'
   },
   heading: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
+  },
+  emojisMain:{
+    justifyContent:'center',
+    alignItems:'center'
   },
   emojis: {
     flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',
     height: '30%',
     gap: 17,
   },
-  emoji: {
-    width: 50,
-    height: 48,
-  },
   suggestionsHeader: {
-    color: '#ddd',
+    color: '#444',
+    marginTop:16
   },
   suggestion: {
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderStyle: 'solid',
-    height:200,
-    width:'80%'
+    marginTop:20,
+    marginBottom:30,
+    height:120,
+    width:270
   },
   send:{
-    width: 300,
-    height: 86,
+    width: 270,
+    height: 46,
+    justifyContent:'center',
+    alignItems:'center',
     backgroundColor: "#fff",
     borderColor: "#00f",
     elevation:3,

@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native"; // Importing components from react-native
 import React, { useState, useContext, useEffect } from "react"; // Importing the useState hook from react
 import axios from "axios"; // Importing axios
@@ -86,10 +87,6 @@ const Documents = ({ navigation }:any) => {
     }, 1000);
   };
 
-  useEffect(() => {
-    // Filter Endpoints
-    //filterEndpointsAndTitles();
-  },[titles]);
 
   return (
     <View
@@ -111,11 +108,30 @@ const Documents = ({ navigation }:any) => {
           padding: 10,
         }}
         placeholder="Enter book name"
-        onChangeText={(text) => setCode(text)}
+        onChangeText={(text) => {
+          setCode(text)
+        }}
       >
+
         
       </TextInput>
       <TouchableOpacity
+      onPress={()=>searchHandler()}
+      style={{
+        position:'absolute',
+        top:26,
+        left:300,
+      }}
+      >
+      <Image 
+        source={require('../assets/search.png')}
+        style={{
+
+          width:28,
+          height:28
+        }}/>
+        </TouchableOpacity>
+      {/* <TouchableOpacity
               style={{
                 width: 70,
                 height: 30,
@@ -136,7 +152,7 @@ const Documents = ({ navigation }:any) => {
               >
                 Search
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
       <View>
         <View>
           <>
