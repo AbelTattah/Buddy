@@ -134,7 +134,6 @@ export default function App() {
             component={App1}
             options={{
               headerShown: false,
-              headerTintColor: "#00f9",
             }}
           />
         </Stack.Navigator>

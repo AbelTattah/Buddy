@@ -27,7 +27,8 @@ export  function Main({navigation}:any) {
     <View style={styles.me}>
       <Text style={{
         padding:40,
-        fontSize:20
+        fontSize:35,
+        fontWeight:'bold'
       }}>Settings</Text>
       <TouchableOpacity
         style={styles.meTopButtons}

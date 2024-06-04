@@ -13,6 +13,7 @@ import axios from "axios"; // Importing axios
 import { createNativeStackNavigator } from "@react-navigation/native-stack"; // Importing the createNativeStackNavigator from @react-navigation/stack
 import { NavigationContainer } from "@react-navigation/native"; // Importing the NavigationContainer from @react-navigation/native
 import { userContext } from "../store/user";
+import { useWindowDimensions } from "react-native";
 
 import DocumentRender from "./DocumentRender";
 
@@ -43,6 +44,8 @@ const Documents = ({ navigation }:any) => {
 
   //Pdf regex
   const test = /pdf/
+
+  const {width, height} = useWindowDimensions()
 
 
   // Get endpoints for getting pdfs from api
@@ -91,7 +94,6 @@ const Documents = ({ navigation }:any) => {
   return (
     <View
       style={{
-        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         paddingTop: 50,
@@ -107,7 +109,7 @@ const Documents = ({ navigation }:any) => {
           marginBottom: 20,
           padding: 10,
         }}
-        placeholder="Enter book name"
+        placeholder="                      Enter book name"
         onChangeText={(text) => {
           setCode(text)
         }}
@@ -175,11 +177,10 @@ const Documents = ({ navigation }:any) => {
               <>
                 <ScrollView
                   style={{
-                    height: 300,
-                    backgroundColor: "#fff",
+                    height:height < 550 ? 120 : height < 750 ? 150 : 70,
+                    width:width<320?(200):width<400?(300):(400),
+                    backgroundColor: "#0ff",
                     borderRadius: 20,
-                    padding: 10,
-                    display: "flex",
                     flexDirection: "column",
                     gap: 20,
                   }}
@@ -232,13 +233,33 @@ const DocumentNav = ({ navigation }) => {
         <Stack.Screen 
           name="Documents"
           options={{
-            title: "Buddy",
-            headerStyle: {
-              shadowOpacity: 0,
-              height: 110,
-              borderBottomWidth: 0,
-              elevation: 0,
-            },
+            header:()=> <View style={{
+                                height:70,
+                                width:'100%',
+                                justifyContent:'space-between',
+                                backgroundColor:'#fff'
+                              }}>
+                            <Text style={{
+                              fontSize:20,
+                              position:'absolute',
+                              top:20,
+                              left:20,
+                              color:'black',
+                              fontWeight:'bold'
+                            }}>Buddy</Text>
+                            <Text
+                            style={{
+                              fontSize:13,
+                              position:'absolute',
+                              top:20,
+                              right:20,
+                              color:'black',
+                              fontWeight:'bold'
+                            }}
+                            >
+                              Main
+                            </Text>
+                        </View>,
           }}
           component={Documents} />
         <Stack.Screen
