@@ -48,6 +48,9 @@ export  function Main({navigation}:any) {
       >
         <Text style={styles.meTopButtonText}>Feedback</Text>
       </TouchableOpacity>
+      <Text style={{
+        marginTop:100
+      }}>Buddy v1.0</Text>
     </View>
   );
 }

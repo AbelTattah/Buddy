@@ -1,10 +1,13 @@
-import {View, Text, TextInput, StyleSheet, Image} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Image, Alert} from 'react-native';
 import React, { useState } from 'react';
 import {TouchableOpacity} from 'react-native';
-import axios from 'axios';
+import { doc } from 'firebase/firestore';
+import { setDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+
 
 const Feedback = () => {
-  let emotion:string = '';
+  const [emotion,setEmotion] = useState<string>('')
   const [suggestion, setSuggestion] = useState<string>()
   const [opacites,setOpacities] = useState<any[]>([
     1,
@@ -26,11 +29,25 @@ const Feedback = () => {
 
   async function sendFeedback() {
     try {
-      axios.post('', {
-        feedback: emotion,
-        suggestion:suggestion
+      const docRef = await setDoc(doc(db, "users", `user/data/feedback/`), {
+        "emotion":emotion,
+        "suggestion":suggestion
       });
-    } catch (error) {}
+      Alert.alert('Thank you',"Your response matters",
+      [
+        {
+          text:'Ok'
+        }
+      ])
+    } catch (error) {
+      console.log(error)
+      Alert.alert('Error',"An error occured. Try again",
+      [
+        {
+          text:'Ok'
+        }
+      ])
+    }
   }
 
   return (
@@ -40,7 +57,7 @@ const Feedback = () => {
         <Text>What was your experience?</Text>
         <View style={styles.emojis}>
           <TouchableOpacity onPress={() =>{ 
-            emotion = 'sad'
+            setEmotion('sad')
             setOpacity(0)
             }}>
             <Image
@@ -54,7 +71,7 @@ const Feedback = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
-            emotion =  'dissapointed'
+            setEmotion('dissapointed')
             setOpacity(1)
             }}>
             <Image
@@ -68,7 +85,7 @@ const Feedback = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity  onPress={() => {
-            emotion =  'happy'
+            setEmotion('happy')
             setOpacity(2)
             }}>
             <Image
@@ -82,7 +99,7 @@ const Feedback = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
-            emotion =  'love'
+           setEmotion('love')
             setOpacity(3)
             }}>
             <Image
@@ -99,7 +116,7 @@ const Feedback = () => {
       </View>
       <View style={styles.emojisMain}>
         <Text style={styles.suggestionsHeader}>Any Suggestions?</Text>
-        <TextInput style={styles.suggestion}></TextInput>
+        <TextInput onChangeText={(e)=>setSuggestion(e)} style={styles.suggestion}></TextInput>
         <TouchableOpacity onPress={()=>sendFeedback()} style={styles.send}>
           <Text style={styles.heading}>Send</Text>
         </TouchableOpacity>
