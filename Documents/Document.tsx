@@ -6,16 +6,18 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-} from "react-native"; // Importing components from react-native
-import React, { useState, useContext, useEffect } from "react"; // Importing the useState hook from react
-import axios from "axios"; // Importing axios
+  StyleSheet,
+  Alert,
+} from 'react-native'; // Importing components from react-native
+import React, {useState, useContext, useEffect,useRef} from 'react'; // Importing the useState hook from react
+import axios from 'axios'; // Importing axios
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack"; // Importing the createNativeStackNavigator from @react-navigation/stack
-import { NavigationContainer } from "@react-navigation/native"; // Importing the NavigationContainer from @react-navigation/native
-import { userContext } from "../store/user";
-import { useWindowDimensions } from "react-native";
+import {createNativeStackNavigator} from '@react-navigation/native-stack'; // Importing the createNativeStackNavigator from @react-navigation/stack
+import {NavigationContainer} from '@react-navigation/native'; // Importing the NavigationContainer from @react-navigation/native
+import {userContext} from '../store/user';
+import { useWindowDimensions} from 'react-native';
 
-import DocumentRender from "./DocumentRender";
+import DocumentRender from './DocumentRender';
 
 /*
 TODO: 
@@ -25,193 +27,187 @@ TODO:
 2. Previous Books
 */
 
-
 const Stack = createNativeStackNavigator();
 
-var titlesCache:any[] = []; 
-var endpoints:any[] = [];
-
-
+var titlesCache: any[] = [];
+var endpoints: any[] = [];
 
 // Load fonts
-const Documents = ({ navigation }:any) => {
-  const [code, setCode] = useState("");
+const Documents = ({navigation}: any) => {
+  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [titles, setTitles] = useState<any[]>([]);
-  const [currentPdf, setCurrentPdf] = useState<string>("");
+  const [currentPdf, setCurrentPdf] = useState<string>('');
+  const [userComms, setComms] = useState<string>('');
 
   const context = useContext(userContext);
+  const ref = useRef()
 
   //Pdf regex
-  const test = /pdf/
+  const test = /pdf/;
 
-  const {width, height} = useWindowDimensions()
-
+  const {width, height} = useWindowDimensions();
 
   // Get endpoints for getting pdfs from api
-  async function getEndpoints(bookCode:string) {
+  async function getEndpoints(bookCode: string) {
     try {
-      const response = await axios.post(
-        'http://207.211.176.165/buddy', {
-          "keywords":bookCode
-        }
-      );
+      const response = await axios.post('http://207.211.176.165/buddy', {
+        keywords: bookCode,
+      });
+      if (response.data["titles"][0]=="Not found") {
+        setTitles([response.data["titles"]])
+        setLoading(false)
+        return
+      }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
-          endpoints.push(response.data.links[v])
-          titlesCache.push(response.data.titles[v])
+          endpoints.push(response.data.links[v]);
+          titlesCache.push(response.data.titles[v]);
         }
       }
-      
-      setTitles(titlesCache)
+      setTitles(titlesCache);
+      setLoading(false)
+      console.log(endpoints)
     } catch (error) {
-      setTitles(["An error occured"])
+      setTitles(['An error occured']);
     }
   }
 
   // Search for past questions
   const searchHandler = () => {
-    setLoading(true);
-    getEndpoints(code);
-    setTimeout(() => {
-      setLoading(false);
-    }, 4000);
+    if (code=="") {
+      Alert.alert('Book Name Empty',"Enter a book name to continue",[
+        {
+          text:'Ok'
+        }
+      ])
+    }
+    else {
+      setComms("")
+      this.textInput.clear()
+      setCode("")
+      setTitles([]);
+      titlesCache=[]
+      endpoints=[]
+      setLoading(true);
+      getEndpoints(code);
+    }
   };
 
   // Navigate to pdf view
   const navigationHandler = () => {
     setTimeout(() => {
-      if (titles[0] !=="Not found" || titles[0] !== "An error occured")  {
-        navigation.navigate("Document",{
-          book:currentPdf
+      if (titles[0] !== 'Not found' || titles[0] !== 'An error occured') {
+        navigation.navigate('Document', {
+          book: currentPdf,
         });
       }
     }, 1000);
   };
 
+  useEffect(()=>{
+
+  },[endpoints])
 
   return (
     <View
       style={{
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingTop: 50,
-        backgroundColor: "#fff",
-      }}
-    >
-      <TextInput
-        style={{
-          borderColor: "grey",
-          borderBottomWidth: 1,
-          height: 60,
-          width: 300,
-          marginBottom: 20,
-          padding: 10,
-        }}
-        placeholder="                      Enter book name"
-        onChangeText={(text) => {
-          setCode(text)
-        }}
-      >
-
-        
-      </TextInput>
-      <TouchableOpacity
-      onPress={()=>searchHandler()}
-      style={{
-        position:'absolute',
-        top:26,
-        left:300,
-      }}
-      >
-      <Image 
-        source={require('../assets/search.png')}
-        style={{
-
-          width:28,
-          height:28
-        }}/>
+        backgroundColor: '#fff',
+      }}>
+      <Text>{userComms}</Text>
+      <View style={styles.search}>
+        <TextInput
+          ref={(input) => {
+            this.textInput = input;
+          }}
+          style={{
+            height: 40,
+            width: 230,
+            marginTop: 73,
+            marginBottom: 30,
+            padding: 10,
+            color: 'black',
+          }}
+          placeholder="                      Enter book name"
+          onChangeText={text => {
+            setCode(text);
+          }}></TextInput>
+        <TouchableOpacity
+          onPress={() => searchHandler()}
+          style={styles.searchButton}>
+          <Image
+            source={require('../assets/search.png')}
+            style={{
+              width: 28,
+              height: 28,
+            }}
+          />
         </TouchableOpacity>
-      {/* <TouchableOpacity
-              style={{
-                width: 70,
-                height: 30,
-                marginLeft: 240,
-                display: "flex",
-                justifyContent: "center",
-                backgroundColor: "#7979FF8e",
-                zIndex: 1,
-              }}
-              onPress={() => {
-                searchHandler();
-              }}
-            >
-              <Text
-                style={{
-                  textAlign: "center",
-                }}
-              >
-                Search
-              </Text>
-            </TouchableOpacity> */}
+      </View>
+      <Text style={styles.resultsCount}>
+        Results:{titles[0] == 'Not found' ? 0 : titles.length}
+      </Text>
       <View>
-        <View>
+        <View
+          style={{
+            height: height < 550 ? 340 : height < 750 ? 420 : 540,
+            width: width < 320 ? 200 : width < 400 ? 300 : 350,
+            marginBottom: 230,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
           <>
-
             {loading ? (
               <View
                 style={{
-                  flex:1,
-                  backgroundColor: "#fff",
+                  flex: 1,
+                  backgroundColor: '#fff',
                   borderRadius: 20,
                   padding: 10,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <ActivityIndicator size="large"/>
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <ActivityIndicator size="large" />
               </View>
             ) : (
               <>
                 <ScrollView
                   style={{
-                    height:height < 550 ? 120 : height < 750 ? 150 : 70,
-                    width:width<320?(200):width<400?(300):(400),
-                    backgroundColor: "#0ff",
+                    backgroundColor: '#fff',
                     borderRadius: 20,
-                    flexDirection: "column",
+                    flexDirection: 'column',
                     gap: 20,
-                  }}
-                >
+                  }}>
                   {titles.map((title, i) => (
                     <TouchableOpacity
                       key={i}
                       style={{
                         width: 300,
                         height: 86,
-                        backgroundColor: "#fff",
-                        borderColor: "#00f",
-                        elevation:3,
-                        borderWidth:0.3,
+                        backgroundColor: '#fff',
+                        borderColor: '#00f',
+                        elevation: 3,
+                        borderWidth: 0.3,
                         borderRadius: 3,
-                        justifyContent: "center",
+                        justifyContent: 'center',
                         margin: 10,
                         marginRight: 10,
                       }}
                       onPress={() => {
-                        console.log(endpoints[i])
+                        console.log(endpoints[i]);
                         context.setPdf(endpoints[i]);
                         setCurrentPdf(title);
                         navigationHandler();
-                      }}
-                    >
+                      }}>
                       <Text
                         style={{
-                          textAlign: "center",
-                        }}
-                      >
+                          textAlign: 'center',
+                        }}>
                         {title}
                       </Text>
                     </TouchableOpacity>
@@ -226,52 +222,56 @@ const Documents = ({ navigation }:any) => {
   );
 };
 
-const DocumentNav = ({ navigation }) => {
+const DocumentNav = ({navigation}) => {
   return (
     <NavigationContainer independent>
       <Stack.Navigator>
-        <Stack.Screen 
+        <Stack.Screen
           name="Documents"
           options={{
-            header:()=> <View style={{
-                                height:70,
-                                width:'100%',
-                                justifyContent:'space-between',
-                                backgroundColor:'#fff'
-                              }}>
-                            <Text style={{
-                              fontSize:20,
-                              position:'absolute',
-                              top:20,
-                              left:20,
-                              color:'black',
-                              fontWeight:'bold'
-                            }}>Buddy</Text>
-                            <Text
-                            style={{
-                              fontSize:13,
-                              position:'absolute',
-                              top:20,
-                              right:20,
-                              color:'black',
-                              fontWeight:'bold'
-                            }}
-                            >
-                              Main
-                            </Text>
-                        </View>,
+            header: () => (
+              <View
+                style={{
+                  height: 70,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  backgroundColor: '#fff',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    position: 'absolute',
+                    top: 20,
+                    left: 20,
+                    color: 'black',
+                    fontWeight: 'bold',
+                  }}>
+                  Buddy
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    position: 'absolute',
+                    top: 20,
+                    right: 20,
+                    color: 'black',
+                    fontWeight: 'bold',
+                  }}>
+                  Main
+                </Text>
+              </View>
+            ),
           }}
-          component={Documents} />
+          component={Documents}
+        />
         <Stack.Screen
           name="Document"
-          options={
-            ({route})=>{
-              const title = route.params.book;
-              return {
-                title:title
-              }
-            }
-          }
+          options={({route}) => {
+            const title = route.params.book;
+            return {
+              title: title,
+            };
+          }}
           component={DocumentRender}
         />
       </Stack.Navigator>
@@ -281,8 +281,6 @@ const DocumentNav = ({ navigation }) => {
 
 export default DocumentNav;
 
-
-
 /*
 map((item:any,index:any)=>{
         console.log(test.test(item))
@@ -290,4 +288,22 @@ map((item:any,index:any)=>{
           return item
         }
       });
-*/ 
+*/
+
+const styles = StyleSheet.create({
+  search: {
+    flexDirection: 'row',
+    width: 300,
+    height: 120,
+    marginBottom: 20,
+    marginTop: -2,
+    borderColor: 'grey',
+    borderBottomWidth: 1,
+  },
+  searchButton: {
+    marginTop: 80,
+  },
+  resultsCount: {
+    marginLeft: 200,
+  },
+});
