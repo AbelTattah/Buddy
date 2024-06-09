@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: 'black',
     marginLeft:50,
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: 'FredokaBold'
   },
   meMiddleButtons: {

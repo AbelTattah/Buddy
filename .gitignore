@@ -16,6 +16,7 @@ web-build/
 *.p12
 *.key
 *.mobileprovision
+/android/app/my-release-key.keystore
 
 # Metro
 .metro-health-check*

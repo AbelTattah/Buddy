@@ -16,7 +16,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack'; // Im
 import {NavigationContainer} from '@react-navigation/native'; // Importing the NavigationContainer from @react-navigation/native
 import {userContext} from '../store/user';
 import { useWindowDimensions} from 'react-native';
-
 import DocumentRender from './DocumentRender';
 
 /*
@@ -42,8 +41,7 @@ const Documents = ({navigation}: any) => {
 
   const context = useContext(userContext);
   const ref = useRef()
-
-  //Pdf regex
+  //Pdf regex http://207.211.176.165/buddy
   const test = /pdf/;
 
   const {width, height} = useWindowDimensions();
@@ -51,7 +49,7 @@ const Documents = ({navigation}: any) => {
   // Get endpoints for getting pdfs from api
   async function getEndpoints(bookCode: string) {
     try {
-      const response = await axios.post('http://207.211.176.165/buddy', {
+      const response = await axios.post('https://buddy-zpdh.onrender.com/geturl', {
         keywords: bookCode,
       });
       if (response.data["titles"][0]=="Not found") {
@@ -70,8 +68,11 @@ const Documents = ({navigation}: any) => {
       setLoading(false)
       console.log(endpoints)
     } catch (error) {
+      setLoading(false);
+      console.log(error)
       setTitles(['An error occured']);
     }
+    setLoading(false);
   }
 
   // Search for past questions
@@ -98,7 +99,10 @@ const Documents = ({navigation}: any) => {
   // Navigate to pdf view
   const navigationHandler = () => {
     setTimeout(() => {
-      if (titles[0] !== 'Not found' || titles[0] !== 'An error occured') {
+      if (titles[0] == 'Not found' || titles[0] == 'An error occured') {
+        return
+      }
+      else {
         navigation.navigate('Document', {
           book: currentPdf,
         });
@@ -106,16 +110,13 @@ const Documents = ({navigation}: any) => {
     }, 1000);
   };
 
-  useEffect(()=>{
-
-  },[endpoints])
 
   return (
     <View
       style={{
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 50,
+        paddingTop: 10,
         backgroundColor: '#fff',
       }}>
       <Text>{userComms}</Text>
@@ -132,7 +133,7 @@ const Documents = ({navigation}: any) => {
             padding: 10,
             color: 'black',
           }}
-          placeholder="                      Enter book name"
+          placeholder="       Enter book name"
           onChangeText={text => {
             setCode(text);
           }}></TextInput>
@@ -149,7 +150,7 @@ const Documents = ({navigation}: any) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.resultsCount}>
-        Results:{titles[0] == 'Not found' ? 0 : titles.length}
+        Results:{titles[0] == 'Not found'|| titles[0]=='An error occured' ? 0 : titles.length}
       </Text>
       <View>
         <View
@@ -187,7 +188,7 @@ const Documents = ({navigation}: any) => {
                     <TouchableOpacity
                       key={i}
                       style={{
-                        width: 300,
+                        width: width < 320 ? 160 : width < 400 ? 250 : 310,
                         height: 86,
                         backgroundColor: '#fff',
                         borderColor: '#00f',
