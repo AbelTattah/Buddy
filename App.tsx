@@ -16,6 +16,8 @@ import {userContext} from './store/user';
 import UserContextProvider from './store/user';
 import DocumentNav from './Documents/Document';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
+import Login from './Screens/login';
+import Register from './Screens/register';
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -29,7 +31,7 @@ function App1({navigation}: any) {
   return (
     <>
       <StatusBar hidden={siv} />
-      {true ? (
+      {isLoggedIn ? (
         <NavigationContainer independent>
           <Tab.Navigator>
             <Tab.Screen
@@ -133,7 +135,7 @@ export default function App() {
             );
             break;
           case RESULTS.DENIED:
-            request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE)
+            request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
             break;
           case RESULTS.GRANTED:
             console.log('The permission is granted');
@@ -170,16 +172,16 @@ export default function App() {
     <UserContextProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          {/* <Stack.Screen
+          <Stack.Screen
             name="Login"
             component={Login}
-            options={{ headerShown: false }}
+            options={{title: 'Buddy', headerShadowVisible: false}}
           />
           <Stack.Screen
             name="Register"
             component={Register}
-            options={{ title: "Sign Up" }}
-          /> */}
+            options={{title: 'Sign Up', headerShadowVisible: false}}
+          />
           <Stack.Screen
             name="App1"
             component={App1}

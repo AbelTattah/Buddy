@@ -1,5 +1,6 @@
 // Purpose: This file contains the styles for the entire application. It is imported into the components that need it.
 import { StyleSheet, StatusBar } from 'react-native'
+import Colors from '../colors/colors'
 
 
 // Styles for the entire application
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   
   // Login Page
   loginLogo: {
-    marginTop: 50,
+    marginTop: 10,
     marginBottom: 30
   },
   loginLogoText: {
@@ -298,16 +299,23 @@ const styles = StyleSheet.create({
     margin: 23
   },
   loginButton: {
-    width: 300,
-    height: 40,
-    backgroundColor: '#7979FF8e',
-    borderRadius: 2
+    height: 52,
+    width:300,
+    backgroundColor: '#fff',
+    borderColor: '#00f',
+    elevation: 3,
+    borderWidth: 0.3,
+    borderRadius: 30,
+    justifyContent: 'center',
+    margin: 10,
+    marginRight: 10,
   },
   loginTextIn: {
     borderRadius: 2,
     borderWidth: 1,
+    backgroundColor:Colors.primary300,
     width: 300,
-    height: 40,
+    height: 50,
     paddingHorizontal: 10,
     color: 'black'
   },
@@ -316,17 +324,21 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   loginReg: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    borderRadius:30
   },
 
   // Register
   regCheckmain: {
+    width:"100%",
+    justifyContent:"center",
+    alignItems:'center',
     flex: 0.4,
     gap: 10,
     marginBottom: 0
   },
   RegginLogo: {
-    marginTop: 50,
+    marginTop: 10,
     marginBottom: 30
   },
   ReggLogoText: {
@@ -339,25 +351,26 @@ const styles = StyleSheet.create({
   ReggMain: {
     backgroundColor: 'white',
     flex: 1,
-    paddingTop: 40,
+    paddingTop: 0,
     justifyContent: 'center',
     alignItems: 'center'
   },
   ReggIn: {
     gap: 40,
-    margin: 23
+    margin: 13
   },
   ReggButton: {
     width: 300,
     height: 40,
     backgroundColor: '#2407f2',
-    borderRadius: 2
+    borderRadius: 30
   },
   ReggTextIn: {
     borderRadius: 2,
     borderWidth: 1,
+    backgroundColor:Colors.primary300,
     width: 300,
-    height: 40,
+    height: 50,
     paddingHorizontal: 10,
     color: 'black'
   },
@@ -371,7 +384,7 @@ const styles = StyleSheet.create({
     marginTop: 60
   },
   loginTextt1: {
-    marginTop: 30,
+    marginTop: 10,
     color: '#2407f2',
     marginBottom: 20
   },
