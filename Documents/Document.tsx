@@ -32,7 +32,7 @@ var titlesCache: any[] = [];
 var endpoints: any[] = [];
 
 // Load fonts
-const Documents = ({navigation}: any) => {
+const DocumentSearch = ({navigation}: any) => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [titles, setTitles] = useState<any[]>([]);
@@ -103,7 +103,7 @@ const Documents = ({navigation}: any) => {
         return
       }
       else {
-        navigation.navigate('Document', {
+        navigation.navigate('DocumentView', {
           book: currentPdf,
         });
       }
@@ -228,7 +228,7 @@ const DocumentNav = ({navigation}) => {
     <NavigationContainer independent>
       <Stack.Navigator>
         <Stack.Screen
-          name="Documents"
+          name="DocumentSearch"
           options={{
             header: () => (
               <View
@@ -263,10 +263,10 @@ const DocumentNav = ({navigation}) => {
               </View>
             ),
           }}
-          component={Documents}
+          component={DocumentSearch}
         />
         <Stack.Screen
-          name="Document"
+          name="DocumentView"
           options={({route}) => {
             const title = route.params.book;
             return {
