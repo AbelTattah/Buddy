@@ -24,7 +24,6 @@ export default function Login({navigation}) {
   const [pass, setPass] = useState(''); // Password state
   const [suds, setSuds] = useState({}); // User data state
   const [regg, setRegg] = useState('Hm'); // Registration state
-  const [acc, setAcc] = useState(''); // Account state
   const context = useContext(userContext);
 
   // Sign in function
@@ -50,6 +49,7 @@ export default function Login({navigation}) {
           if (data.error == undefined) {
             SaveInStorage(data);
             context.setAuthState(true);
+            context.setName(suds["SNAME"]);
             navigation.navigate('App1');
           } else {
             Alert.alert('Error', `${data.error.message}`, [
@@ -78,11 +78,12 @@ export default function Login({navigation}) {
 
   async function SaveInStorage(data: any) {
     try {
-      await AsyncStorage.setItem('Data', JSON.stringify(data));
+      await AsyncStorage.setItem('Data', JSON.stringify({data:data,name:suds["SNAME"]}));
     } catch (error) {
       console.log(error);
     }
   }
+
 
   // function to read user data from firestore
   async function DataRead() {
@@ -93,7 +94,6 @@ export default function Login({navigation}) {
     if (docSnap.exists()) {
       setSuds(docSnap.data());
       console.log(suds);
-      setAcc('loop');
     } else {
       // docSnap.data() will be undefined in this case
       console.log('No such document!');
@@ -106,12 +106,6 @@ export default function Login({navigation}) {
   }, [emaill]);
 
   useEffect(() => {
-    setTimeout(() => {
-      DataRead();
-    }, 500);
-  }, [acc]);
-
-  useEffect(() => {
     async function autoLogin() {
       try {
         //Check whether key is available in storage
@@ -121,6 +115,8 @@ export default function Login({navigation}) {
           console.log(response);
         } else {
           navigation.navigate('App1');
+          let name = JSON.parse(response).name;
+          context.setName(name);
           context.setAuthState(true);
         }
       } catch (error) {

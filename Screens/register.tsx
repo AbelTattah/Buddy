@@ -119,6 +119,14 @@ export default function Register({navigation}) {
           ref={input => {
             this.textInput1 = input;
           }}
+          placeholder="    name"
+          onChangeText={text => setNameid(text)}
+        />
+        <TextInput
+          style={styles.ReggTextIn}
+          ref={input => {
+            this.textInput1 = input;
+          }}
           inputMode="email"
           placeholder="    email"
           autoCapitalize="none"

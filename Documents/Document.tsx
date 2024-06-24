@@ -230,38 +230,7 @@ const DocumentNav = ({navigation}) => {
         <Stack.Screen
           name="DocumentSearch"
           options={{
-            header: () => (
-              <View
-                style={{
-                  height: 70,
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  backgroundColor: '#fff',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    position: 'absolute',
-                    top: 20,
-                    left: 20,
-                    color: 'black',
-                    fontWeight: 'bold',
-                  }}>
-                  Buddy
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    position: 'absolute',
-                    top: 20,
-                    right: 20,
-                    color: 'black',
-                    fontWeight: 'bold',
-                  }}>
-                  Main
-                </Text>
-              </View>
-            ),
+            headerShown: false
           }}
           component={DocumentSearch}
         />

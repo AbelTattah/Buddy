@@ -18,6 +18,7 @@ import DocumentNav from './Documents/Document';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import Login from './Screens/login';
 import Register from './Screens/register';
+import Home from './Screens/Home';
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -35,8 +36,8 @@ function App1({navigation}: any) {
         <NavigationContainer independent>
           <Tab.Navigator>
             <Tab.Screen
-              component={DocumentNav}
-              name="Document"
+              component={Home}
+              name="Home"
               options={{
                 tabBarIcon: (color, size) => (
                   <Image
