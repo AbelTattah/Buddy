@@ -1,35 +1,44 @@
 // Book Card
 
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import Colors from "../colors/colors";
 
 
-const BookCard = ({image, bookTitle,explore}:any) => {
+const BookCard = ({image="Hllo", bookTitle,explore,func}:any) => {
   if (explore==true){
     return (
-        <View style={[styles.container,{backgroundColor:Colors.primary200}]}>
+      <TouchableOpacity onPress={func}>
+        <View style={[styles.container,{backgroundColor:Colors.primary300}]}>
           <View style={styles.cardText}>
-          <Image
-              source={image}
-              style={styles.profilePic}
-            />
-           <>
-            <Text style={styles.name}>{bookTitle}</Text>
+              {
+              /* 
+                  <Image
+                    source={image}
+                    style={styles.profilePic}
+                  />
+              */
+              }
+            <> 
+              <Text style={styles.name}>{bookTitle}</Text>
             </>
           </View>
         </View>
+      </TouchableOpacity>
       );
   }
   else {
     return (
-        <View style={[styles.container,{backgroundColor:Colors.primary200}]}>
+        <View style={[styles.container,{backgroundColor:Colors.primary300}]}>
           <View style={styles.cardText}>
-          <Image
-              source={image}
-              style={styles.profilePic2}
-            />
-           <>
+            {
+              /* <Image
+                    source={image}
+                    style={styles.profilePic2}
+                  /> 
+              */
+            }
+            <>
             <Text style={styles.name}>{bookTitle}</Text>
             </>
           </View>

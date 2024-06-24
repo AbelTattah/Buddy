@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         width:150,
         padding:4,
         borderRadius:10,
-        backgroundColor:'#ddd'
+        backgroundColor:'#eee'
     },
     genre:{
         fontWeight:"700",
