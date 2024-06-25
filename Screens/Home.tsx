@@ -27,6 +27,8 @@ const Stack = createStackNavigator();
 
 var titlesCache: any[] = [];
 var endpoints: any[] = [];
+var first = true
+
 
 const Main = ({navigation}) => {
   const {name} = useContext(userContext);
@@ -34,7 +36,6 @@ const Main = ({navigation}) => {
   const [titles, setTitles] = useState<any[]>([]);
   const [currentPdf, setCurrentPdf] = useState<string>('');
   const [code, setCode] = useState('');
-  var first = true
 
   //Responsiveness
   const {width, height} = useWindowDimensions();
@@ -67,7 +68,7 @@ const Main = ({navigation}) => {
   // Get endpoints for getting pdfs from api
   async function fetchGenre(bookCode: string) {
     try {
-      const response = await axios.post('https://buddy-zpdh.onrender.com/geturl', {
+      const response = await axios.post('http://207.211.176.165/buddy', {
         keywords: bookCode,
       });
       if (response.data["titles"][0]=="Not found") {
@@ -82,13 +83,12 @@ const Main = ({navigation}) => {
           titlesCache.push(response.data.titles[v]);
         }
       }
-      setTitles(titlesCache);
+      setTitles([titles,...titlesCache]);
         setLoading(true)
-      console.log(endpoints)
     } catch (error) {
       setLoading(true);
       console.log(error)
-      setTitles(['An error occured']);
+      //setTitles(titles.push(['An error occured']));
     }
     setLoading(true);
   }
@@ -96,10 +96,11 @@ const Main = ({navigation}) => {
   // Search for past questions
   const searchHandler = () => {
       setCode(genre[4])
-      if (first!==false) {
+      if (first==true) {
       setLoading(false);
       }
       fetchGenre(code);
+      first = false
   };
 
   // Navigate to pdf view
@@ -109,7 +110,7 @@ const Main = ({navigation}) => {
         return
       }
       else {
-        navigation.navigate('DocumentView', {
+        navigation.navigate('View', {
           book: currentPdf,
         });
       }
@@ -120,9 +121,6 @@ const Main = ({navigation}) => {
   useEffect(() => {
     setName(name);
     searchHandler()
-    setTimeout(()=>{
-      first = false
-    },2000)
   }, []);
 
 
@@ -145,13 +143,11 @@ const Main = ({navigation}) => {
         {loading ? (
           <>
             <Text style={styles.sectionHeader}>Genre</Text>
-            <View style={styles.search}>
               <ScrollView style={styles.genres} horizontal={true}>
                 {genre.map((item, i) => {
                   return (
                     <>
                           <GenreCard search={()=>{
-                        console.log("Hello")
                           setCode(item)
                           setTitles([])
                           endpoints = []
@@ -162,8 +158,21 @@ const Main = ({navigation}) => {
                     );
                 })}
               </ScrollView>
-            </View>
             <Text style={styles.sectionHeader}>Featured</Text>
+            <ScrollView style={styles.featured} horizontal={true}>
+                {titles.map((title, i) => (
+                      <BookCard 
+                        bookTitle = {title}
+                        explore = {false}
+
+                        func={() => {
+                          console.log(endpoints[i]);
+                          context.setPdf(endpoints[i]);
+                          setCurrentPdf(title);
+                          navigationHandler();
+                      }} />
+                  ))}
+              </ScrollView>
             <Text style={styles.sectionHeader}>Explore</Text>
             {/*Explore */}
             {titles.map((title, i) => (
@@ -237,6 +246,10 @@ const styles = StyleSheet.create({
     gap: 10,
     height: 60,
   },
+  featured:{
+    gap: 10,
+    height: 200,
+  },
   greeting: {
     fontSize: 28,
     color: 'black',
@@ -259,11 +272,10 @@ const styles = StyleSheet.create({
     height: 280,
   },
   search: {
-    height: '10%',
+    height: 100,
     paddingTop: 17,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
   },
   input: {
     height: 50,
@@ -278,6 +290,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 20,
     marginTop: 50,
+    marginBottom:20,
     color: 'black',
     fontWeight: 'bold',
   },

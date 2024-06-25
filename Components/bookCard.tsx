@@ -29,7 +29,7 @@ const BookCard = ({image="Hllo", bookTitle,explore,func}:any) => {
   }
   else {
     return (
-        <View style={[styles.container,{backgroundColor:Colors.primary300}]}>
+        <View style={[styles.container2,{backgroundColor:Colors.primary300}]}>
           <View style={styles.cardText}>
             {
               /* <Image
@@ -54,18 +54,20 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 10,
-    width: 200,
-    height: 170,
+    width: "100%",
+    height: 370,
     marginRight: 20,
     borderRadius: 15,
+    marginBottom:25
   },
   container2: {
     alignItems: "center",
     padding: 10,
-    width: 350,
-    height: 230,
+    width: 250,
+    height: 200,
     marginRight: 20,
     borderRadius: 15,
+    marginBottom:25
   },
   profilePic: {
     width: 50,
