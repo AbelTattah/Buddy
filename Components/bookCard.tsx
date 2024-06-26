@@ -1,28 +1,25 @@
 // Book Card
 
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Colors from "../colors/colors";
 
 
-const BookCard = ({image="Hllo", bookTitle,explore,func}:any) => {
+const BookCard = ({image, bookTitle,explore,func}:any) => {
+  useEffect(()=>{
+    console.log(image)
+  })
   if (explore==true){
     return (
       <TouchableOpacity onPress={func}>
         <View style={[styles.container,{backgroundColor:Colors.primary300}]}>
-          <View style={styles.cardText}>
-              {
-              /* 
                   <Image
-                    source={image}
+                    source={{uri:image}}
                     style={styles.profilePic}
                   />
-              */
-              }
-            <> 
+          <View style={styles.cardText}>
               <Text style={styles.name}>{bookTitle}</Text>
-            </>
-          </View>
+              </View>
         </View>
       </TouchableOpacity>
       );
@@ -53,6 +50,8 @@ export default BookCard;
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
+    justifyContent:'center',
+    flexDirection:"column",
     padding: 10,
     width: "100%",
     height: 370,
@@ -62,6 +61,8 @@ const styles = StyleSheet.create({
   },
   container2: {
     alignItems: "center",
+    justifyContent:'center',
+    flexDirection:"column",
     padding: 10,
     width: 250,
     height: 200,
@@ -70,8 +71,8 @@ const styles = StyleSheet.create({
     marginBottom:25
   },
   profilePic: {
-    width: 50,
-    height: 52,
+    width: "90%",
+    height: "70%",
     marginLeft:18,
     marginBottom:10,
     borderRadius:50

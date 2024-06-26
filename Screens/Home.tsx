@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   Touchable,
   TouchableOpacity,
-  useWindowDimensions
+  useWindowDimensions,
+  Button,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import React, {useContext} from 'react';
@@ -22,28 +23,28 @@ import DocumentNav from '../Documents/Document';
 import DocumentRenderer from '../Documents/DocumentRender';
 import axios from 'axios';
 import BookCard from '../Components/bookCard';
+import {set} from 'firebase/database';
 
 const Stack = createStackNavigator();
 
 var titlesCache: any[] = [];
 var endpoints: any[] = [];
-var first = true
-
+var images: any[] = [];
+var first = true;
 
 const Main = ({navigation}) => {
   const {name} = useContext(userContext);
   const [nameId, setName] = useState('');
   const [titles, setTitles] = useState<any[]>([]);
+  const [loadingExplore, setLoadingExplore] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<string>('');
   const [code, setCode] = useState('');
 
   //Responsiveness
   const {width, height} = useWindowDimensions();
 
-
   //Pdf regex http://207.211.176.165/buddy
   const test = /pdf/;
-
 
   const [loading, setLoading] = useState(true);
   const [genre, setGenre] = useState([
@@ -62,32 +63,38 @@ const Main = ({navigation}) => {
     'DIY',
   ]);
 
-
   const context = useContext(userContext);
 
   // Get endpoints for getting pdfs from api
   async function fetchGenre(bookCode: string) {
     try {
-      const response = await axios.post('http://207.211.176.165/buddy', {
-        keywords: bookCode,
-      });
-      if (response.data["titles"][0]=="Not found") {
-        setTitles([response.data["titles"]])
-        setLoading(true)
-        return
+      const response = await axios.post(
+        'https://buddy-zpdh.onrender.com/geturl',
+        {
+          keywords: bookCode,
+        },
+      );
+      if (response.data['titles'][0] == 'Not found') {
+        setTitles([response.data['titles']]);
+        setLoading(true);
+        return;
       }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
           endpoints.push(response.data.links[v]);
           titlesCache.push(response.data.titles[v]);
+          images.push(response.data.images[v]);
         }
       }
-      setTitles([titles,...titlesCache]);
-        setLoading(true)
+      setTitles([titles, ...titlesCache]);
+      setLoading(true);
+      setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(true);
-      console.log(error)
+      console.log(error);
+      setLoadingExplore(false);
+      // fetchGenre(code);
       //setTitles(titles.push(['An error occured']));
     }
     setLoading(true);
@@ -95,21 +102,21 @@ const Main = ({navigation}) => {
 
   // Search for past questions
   const searchHandler = () => {
-      setCode(genre[4])
-      if (first==true) {
+    setCode(genre[4]);
+    if (first == true) {
       setLoading(false);
-      }
-      fetchGenre(code);
-      first = false
+      setLoadingExplore(true);
+    }
+    fetchGenre(code);
+    first = false;
   };
 
   // Navigate to pdf view
   const navigationHandler = () => {
     setTimeout(() => {
       if (titles[0] == 'Not found' || titles[0] == 'An error occured') {
-        return
-      }
-      else {
+        return;
+      } else {
         navigation.navigate('View', {
           book: currentPdf,
         });
@@ -117,18 +124,14 @@ const Main = ({navigation}) => {
     }, 1000);
   };
 
-
   useEffect(() => {
     setName(name);
-    searchHandler()
+    searchHandler();
   }, []);
-
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView onScroll={()=>{
-        searchHandler()
-      }} style={styles.main}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.main}>
         <View style={styles.header}>
           <View style={styles.topCard}>
             <Text style={styles.greeting}>Hello, {nameId}!</Text>
@@ -143,50 +146,69 @@ const Main = ({navigation}) => {
         {loading ? (
           <>
             <Text style={styles.sectionHeader}>Genre</Text>
-              <ScrollView style={styles.genres} horizontal={true}>
-                {genre.map((item, i) => {
-                  return (
-                    <>
-                          <GenreCard search={()=>{
-                          setCode(item)
-                          setTitles([])
-                          endpoints = []
-                          titlesCache = []
-                          searchHandler()
-                      }}  genre={item} />
-                    </>
-                    );
-                })}
-              </ScrollView>
+            <ScrollView
+              style={styles.genres}
+              showsHorizontalScrollIndicator={false}
+              horizontal={true}>
+              {genre.map((item, i) => {
+                return (
+                  <>
+                    <GenreCard
+                      search={() => {
+                        setCode(item);
+                        setTitles([]);
+                        endpoints = [];
+                        titlesCache = [];
+                        searchHandler();
+                      }}
+                      genre={item}
+                    />
+                  </>
+                );
+              })}
+            </ScrollView>
             <Text style={styles.sectionHeader}>Featured</Text>
-            <ScrollView style={styles.featured} horizontal={true}>
-                {titles.map((title, i) => (
-                      <BookCard 
-                        bookTitle = {title}
-                        explore = {false}
-
-                        func={() => {
-                          console.log(endpoints[i]);
-                          context.setPdf(endpoints[i]);
-                          setCurrentPdf(title);
-                          navigationHandler();
-                      }} />
+            {loadingExplore ? (
+              <ActivityIndicator color={'#666'} size={40} />
+            ) : (
+              <>
+                <ScrollView style={styles.featured} horizontal={true}>
+                  {titles.map((title, i) => (
+                    <BookCard
+                      bookTitle={title}
+                      explore={false}
+                      image={images[i]}
+                      func={() => {
+                        console.log(endpoints[i]);
+                        context.setPdf(endpoints[i]);
+                        setCurrentPdf(title);
+                        navigationHandler();
+                      }}
+                    />
                   ))}
-              </ScrollView>
+                </ScrollView>
+              </>
+            )}
             <Text style={styles.sectionHeader}>Explore</Text>
             {/*Explore */}
-            {titles.map((title, i) => (
-                      <BookCard 
-                        bookTitle = {title}
-                        explore = {true}
-
-                        func={() => {
-                          console.log(endpoints[i]);
-                          context.setPdf(endpoints[i]);
-                          setCurrentPdf(title);
-                          navigationHandler();
-                      }} />
-                  ))}
+            {loadingExplore ? (
+              <ActivityIndicator color={'#666'} size={40} />
+            ) : (
+              <>
+                {titles.map((title, i) => (
+                  <BookCard
+                    bookTitle={title}
+                    explore={true}
+                    func={() => {
+                      console.log(endpoints[i]);
+                      context.setPdf(endpoints[i]);
+                      setCurrentPdf(title);
+                      navigationHandler();
+                    }}
+                  />
+                ))}
+              </>
+            )}
           </>
         ) : (
           <ActivityIndicator color={'#666'} size={40} />
@@ -246,7 +268,7 @@ const styles = StyleSheet.create({
     gap: 10,
     height: 60,
   },
-  featured:{
+  featured: {
     gap: 10,
     height: 200,
   },
@@ -290,7 +312,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 20,
     marginTop: 50,
-    marginBottom:20,
+    marginBottom: 20,
     color: 'black',
     fontWeight: 'bold',
   },

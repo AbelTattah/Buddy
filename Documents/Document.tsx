@@ -30,6 +30,7 @@ const Stack = createNativeStackNavigator();
 
 var titlesCache: any[] = [];
 var endpoints: any[] = [];
+var images: any[] = [];
 
 // Load fonts
 const DocumentSearch = ({navigation}: any) => {
@@ -40,7 +41,8 @@ const DocumentSearch = ({navigation}: any) => {
   const [userComms, setComms] = useState<string>('');
 
   const context = useContext(userContext);
-  const ref = useRef()
+  const ref = useRef();
+  
   //Pdf regex http://207.211.176.165/buddy
   const test = /pdf/;
 
@@ -62,6 +64,7 @@ const DocumentSearch = ({navigation}: any) => {
         if (test.test(response.data.links[v])) {
           endpoints.push(response.data.links[v]);
           titlesCache.push(response.data.titles[v]);
+          images.push(response.data.images[v]);
         }
       }
       setTitles(titlesCache);
@@ -189,13 +192,14 @@ const DocumentSearch = ({navigation}: any) => {
                       key={i}
                       style={{
                         width: width < 320 ? 160 : width < 400 ? 250 : 310,
-                        height: 86,
-                        backgroundColor: '#fff',
+                        height: 386,
+                        backgroundColor: '#eee',
                         borderColor: '#00f',
                         elevation: 3,
                         borderWidth: 0.3,
-                        borderRadius: 3,
+                        borderRadius: 10,
                         justifyContent: 'center',
+                        alignItems:"center",
                         margin: 10,
                         marginRight: 10,
                       }}
@@ -205,6 +209,16 @@ const DocumentSearch = ({navigation}: any) => {
                         setCurrentPdf(title);
                         navigationHandler();
                       }}>
+                      <Image
+                        source={{uri: images[i]}}
+                        style={{
+                          width: 250,
+                          height: 260,
+                          borderRadius: 10,
+                          marginLeft: 10,
+                          marginBottom:20
+                        }}
+                      />
                       <Text
                         style={{
                           textAlign: 'center',
