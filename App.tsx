@@ -19,6 +19,9 @@ import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import Login from './Screens/login';
 import Register from './Screens/register';
 import Home from './Screens/Home';
+import Icon from 'react-native-vector-icons/Ionicons';
+import History from './Screens/history';
+
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -39,18 +42,28 @@ function App1({navigation}: any) {
               component={Home}
               name="Home"
               options={{
-                tabBarIcon: (color, size) => (
-                  <Image
-                    source={require('./assets/documents.png')}
-                    style={{
-                      width: 25,
-                      height: 25,
-                      marginLeft: 50,
-                    }}
-                  />
-                ),
+                tabBarIcon: ()=><Icon name="document-outline" size={25} color="#555" />,
                 tabBarLabelStyle: {
-                  marginLeft: 50,
+                  fontSize: 12,
+                  fontFamily: 'FredokaBold',
+                },
+                tabBarStyle: {
+                  height: 80,
+                  paddingBottom: 10,
+                  backgroundColor: 'white',
+                  borderTopWidth: 2,
+                },
+                headerShadowVisible: false,
+                headerTintColor: '#fff',
+                headerShown: false,
+              }}
+            />
+            <Tab.Screen
+              component={History}
+              name="History"
+              options={{
+                tabBarIcon: ()=><Icon name="time-outline" size={25} color="#555" />,
+                tabBarLabelStyle: {
                   fontSize: 12,
                   fontFamily: 'FredokaBold',
                 },
@@ -70,18 +83,8 @@ function App1({navigation}: any) {
               component={Settings}
               options={{
                 headerShown: false,
-                tabBarIcon: () => (
-                  <Image
-                    source={require('./assets/cogwheel.png')}
-                    style={{
-                      width: 25,
-                      height: 25,
-                      marginRight: 50,
-                    }}
-                  />
-                ),
+                tabBarIcon: () =><Icon name="settings-outline" size={25} color="#555" />,
                 tabBarLabelStyle: {
-                  marginRight: 50,
                   fontSize: 12,
                   fontFamily: 'FredokaBold',
                 },
@@ -114,6 +117,7 @@ function App1({navigation}: any) {
           <Text>You are not Logged in!</Text>
           <Button
             title="Login Screen"
+            color={"#ccc"}
             onPress={() => navigation.navigate('Login')}
           />
         </View>

@@ -17,6 +17,8 @@ import {NavigationContainer} from '@react-navigation/native'; // Importing the N
 import {userContext} from '../store/user';
 import { useWindowDimensions} from 'react-native';
 import DocumentRender from './DocumentRender';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 /*
 TODO: 
@@ -143,13 +145,8 @@ const DocumentSearch = ({navigation}: any) => {
         <TouchableOpacity
           onPress={() => searchHandler()}
           style={styles.searchButton}>
-          <Image
-            source={require('../assets/search.png')}
-            style={{
-              width: 28,
-              height: 28,
-            }}
-          />
+    <Icon name="search-outline" size={32} color="#555" />
+
         </TouchableOpacity>
       </View>
       <Text style={styles.resultsCount}>
@@ -192,14 +189,15 @@ const DocumentSearch = ({navigation}: any) => {
                       key={i}
                       style={{
                         width: width < 320 ? 160 : width < 400 ? 250 : 310,
-                        height: 386,
-                        backgroundColor: '#eee',
-                        borderColor: '#00f',
+                        height: 374,
+                        backgroundColor: '#fff',
+                        borderColor: 'black',
                         elevation: 3,
                         borderWidth: 0.3,
                         borderRadius: 10,
                         justifyContent: 'center',
                         alignItems:"center",
+                        overflow:"hidden",
                         margin: 10,
                         marginRight: 10,
                       }}
@@ -212,11 +210,13 @@ const DocumentSearch = ({navigation}: any) => {
                       <Image
                         source={{uri: images[i]}}
                         style={{
-                          width: 250,
-                          height: 260,
+                          width: width < 320 ? 160 : width < 400 ? 250 : 310,
+                          height:"75%",
                           borderRadius: 10,
-                          marginLeft: 10,
-                          marginBottom:20
+                          borderBottomRightRadius:0,
+                          borderBottomLeftRadius:0,
+                          marginBottom:50,
+                          marginTop:-5
                         }}
                       />
                       <Text

@@ -23,7 +23,8 @@ import DocumentNav from '../Documents/Document';
 import DocumentRenderer from '../Documents/DocumentRender';
 import axios from 'axios';
 import BookCard from '../Components/bookCard';
-import {set} from 'firebase/database';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const Stack = createStackNavigator();
 
@@ -62,6 +63,21 @@ const Main = ({navigation}) => {
     'Crafts',
     'DIY',
   ]);
+  const [genreIcon,setGenreIcon] = useState([
+    <Icon name="brush-outline" size={22} color="#999" />,
+    <Icon name="flask-outline" size={22} color="#999" />,
+    <Icon name="pencil-outline" size={22} color="#999" />,
+    <Icon name="pencil-outline" size={22} color="#999" />,
+    <Icon name="time-outline" size={22} color="#999" />,
+    <Icon name="settings-outline" size={22} color="#999" />,
+    <Icon name="guitar-outline" size={22} color="#999" />,
+    <Icon name="footbal-outline" size={22} color="#999" />,
+    <Icon name="burger-outline" size={22} color="#999" />,
+    <Icon name="chevron-forward" size={22} color="#999" />,
+    <Icon name="chevron-forward" size={22} color="#999" />,
+    <Icon name="chevron-forward" size={22} color="#999" />,
+    <Icon name="chevron-forward" size={22} color="#999" />
+  ])
 
   const context = useContext(userContext);
 
@@ -84,10 +100,11 @@ const Main = ({navigation}) => {
         if (test.test(response.data.links[v])) {
           endpoints.push(response.data.links[v]);
           titlesCache.push(response.data.titles[v]);
-          images.push(response.data.images[v]);
+          imagesCache.push(response.data.images[v]);
         }
       }
       setTitles([titles, ...titlesCache]);
+      setImages([images,...imagesCache]);
       setLoading(true);
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
@@ -98,18 +115,154 @@ const Main = ({navigation}) => {
       //setTitles(titles.push(['An error occured']));
     }
     setLoading(true);
+    console.log(images)
   }
 
   // Search for past questions
-  const searchHandler = () => {
-    setCode(genre[4]);
-    if (first == true) {
-      setLoading(false);
-      setLoadingExplore(true);
+  const changeGenre =  async (bookCode:string) => {
+
+    setLoading(true);
+    setLoadingExplore(true);
+
+    if (titles[titles.length-1]=="An error occured") {
+      titles.splice(titles.length-1,1)
     }
-    fetchGenre(code);
-    first = false;
+
+    titlesCache = []
+    images = []
+    setTitles([])
+    setCurrentPdf("")
+
+    try {
+      const response = await axios.post(
+        'https://buddy-zpdh.onrender.com/geturl',
+        {
+          keywords: bookCode,
+        },
+      );
+      if (response.data['titles'][0] == 'Not found') {
+        setTitles(['An error occured']);
+        return;
+      }
+      // Filter pdf endpoints
+      for (var v = 0; v < response.data.links.length; v++) {
+        if (test.test(response.data.links[v])) {
+          endpoints.push(response.data.links[v]);
+          titlesCache.push(response.data.titles[v]);
+          images.push(response.data.images[v]);
+        }
+      }
+
+      setTitles(titlesCache);
+      setLoading(false);
+      setTimeout(() => setLoadingExplore(false), 4000);
+    } catch (error) {
+      setLoading(false);
+      setTitles(['An error occured']);
+      console.log(error);
+      setLoadingExplore(false);
+      setTimeout(()=>{
+     if (titles[titles.length-1]=="An error occured") {
+        changeGenre(bookCode);
+     } 
+      },2000)
+    }
   };
+
+  const initialLoad = async(bookCode:string)=> {
+    setLoading(true);
+    setLoadingExplore(true);
+
+    if (titles[titles.length-1]=="An error occured") {
+      titles.splice(titles.length-1,1)
+    }
+
+    titlesCache = []
+    images = []
+    setTitles([])
+    setCurrentPdf("")
+
+    try {
+      const response = await axios.post(
+        'https://buddy-zpdh.onrender.com/geturl',
+        {
+          keywords: bookCode,
+        },
+      );
+      if (response.data['titles'][0] == 'Not found') {
+        setTitles(['An error occured']);
+        return;
+      }
+      // Filter pdf endpoints
+      for (var v = 0; v < response.data.links.length; v++) {
+        if (test.test(response.data.links[v])) {
+          endpoints.push(response.data.links[v]);
+          titlesCache.push(response.data.titles[v]);
+          images.push(response.data.images[v]);
+        }
+      }
+
+      setTitles(titlesCache);
+      setLoading(false);
+      setTimeout(() => setLoadingExplore(false), 4000);
+    } catch (error) {
+      setLoading(false);
+      setTitles(['An error occured']);
+      console.log(error);
+      setLoadingExplore(false);
+      setTimeout(()=>{
+     if (titles[titles.length-1]=="An error occured") {
+        initialLoad(bookCode);
+     } 
+      },2000)
+    }
+  }
+
+
+  const update = async(bookCode:string) => {
+    setLoading(true);
+    setLoadingExplore(true);
+
+    if (titles[titles.length-1]=="An error occured") {
+      titles.splice(titles.length-1,1)
+    }
+
+    try {
+      const response = await axios.post(
+        'https://buddy-zpdh.onrender.com/geturl',
+        {
+          keywords: bookCode,
+        },
+      );
+      if (response.data['titles'][0] == 'Not found') {
+        setTitles(['An error occured']);
+        return;
+      }
+      // Filter pdf endpoints
+      for (var v = 0; v < response.data.links.length; v++) {
+        if (test.test(response.data.links[v])) {
+          endpoints.push(response.data.links[v]);
+          titlesCache.push(response.data.titles[v]);
+          images.push(response.data.images[v]);
+        }
+      }
+
+      setTitles(titlesCache);
+      setLoading(false);
+      setTimeout(() => setLoadingExplore(false), 4000);
+    } catch (error) {
+      setLoading(false);
+      setTitles(['An error occured']);
+      console.log(error);
+      setLoadingExplore(false);
+      setTimeout(()=>{
+     if (titles[titles.length-1]=="An error occured") {
+        update(bookCode);
+     } 
+      },2000)
+    }
+  }
+
 
   // Navigate to pdf view
   const navigationHandler = () => {
@@ -126,7 +279,7 @@ const Main = ({navigation}) => {
 
   useEffect(() => {
     setName(name);
-    searchHandler();
+    initialLoad("literature")
   }, []);
 
   return (
@@ -137,13 +290,10 @@ const Main = ({navigation}) => {
             <Text style={styles.greeting}>Hello, {nameId}!</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-            <Image
-              style={styles.profilePic}
-              source={require('../assets/search.png')}
-            />
+          <Icon name="search-outline" size={32} color="#555" />
           </TouchableOpacity>
         </View>
-        {loading ? (
+        {loading == false ? (
           <>
             <Text style={styles.sectionHeader}>Genre</Text>
             <ScrollView
@@ -154,12 +304,9 @@ const Main = ({navigation}) => {
                 return (
                   <>
                     <GenreCard
+                     Icon={genreIcon[i]}
                       search={() => {
-                        setCode(item);
-                        setTitles([]);
-                        endpoints = [];
-                        titlesCache = [];
-                        searchHandler();
+                        changeGenre(item)
                       }}
                       genre={item}
                     />
@@ -172,7 +319,10 @@ const Main = ({navigation}) => {
               <ActivityIndicator color={'#666'} size={40} />
             ) : (
               <>
-                <ScrollView style={styles.featured} horizontal={true}>
+                <ScrollView
+                  style={styles.featured} 
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}>
                   {titles.map((title, i) => (
                     <BookCard
                       bookTitle={title}
@@ -239,7 +389,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primary100,
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },

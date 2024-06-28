@@ -105,12 +105,18 @@ export default function Register({navigation}) {
       <Text
         style={{
           borderRadius: 10,
-          fontSize: 40,
-          fontWeight: 'bold',
-          color: Colors.secondary100,
-          marginRight: 25,
+          marginTop:70,
+          fontSize:33,
+          marginRight:130,
+          color:"black"
         }}>
-        Sign Up
+        Sign Up for
+      </Text>
+      <Text style={{
+        marginBottom:30,
+        marginRight:150
+      }}>
+        Free and Instant books
       </Text>
       <KeyboardAvoidingView style={styles.ReggIn} behavior="padding">
         {/* Sign up inputs */}

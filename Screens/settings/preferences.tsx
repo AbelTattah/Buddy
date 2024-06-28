@@ -6,7 +6,7 @@ import { userContext } from '../../store/user';
 export default function Preferences() {
   const [isOneEnabled,setIsOneEnabled] = useState(false)
   const [isTwoEnabled,setIsTwoEnabled] = useState(false)
-  const {siv,setSiv} = useContext(userContext)
+  const {siv,setSiv,theme,setTheme} = useContext(userContext)
 
   
   function activateDarkMode() {
@@ -31,28 +31,36 @@ export default function Preferences() {
 
   return (
     <View style={style.container}>
-      <Text style={style.heading}>Preferences</Text>
+      <Text style={style.heading}>Customize</Text>
       <View style={style.buttons}>
-        <TouchableOpacity style={styles.meTopButtons}>
-          <View style={style.buttonInner}>
-            <Text style={styles.meTopButtonText}>Hide Status Bar</Text>
-            <Switch 
-            value={isOneEnabled}
-            onValueChange={hideStatusBar}
-            >
-            </Switch>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.meTopButtons}>
-          <View style={style.buttonInner}>
-            <Text style={styles.meTopButtonText}>Darkmode</Text>
-            <Switch
-            value={isTwoEnabled}
-            onValueChange={activateDarkMode}
-            >
-            </Switch>
-          </View>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            { color: theme == "light" ? "black" : "white" },
+          ]}
+        >
+          Hide Status bar
+        </Text>
+        <Switch
+          value={isOneEnabled}
+          onValueChange={hideStatusBar}
+        />
+      </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            { color: theme == "light" ? "black" : "white" },
+          ]}
+        >
+          Dark Theme
+        </Text>
+        <Switch
+          value={theme == "light" ? false : true}
+          onValueChange={activateDarkMode}
+        />
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -62,12 +70,10 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   heading: {
-    fontWeight: 'bold',
-    fontSize: 38,
+    fontSize: 28,
   },
   buttons: {
     marginTop: 30,

@@ -1,5 +1,5 @@
 import React from 'react'; // Importing components from react
-import {View, Text, TouchableOpacity} from 'react-native'; // Importing components from react-native
+import {View, Text, TouchableOpacity, Switch} from 'react-native'; // Importing components from react-native
 import styles from '../Styling/styles'; // Importing the styles from the styles file
 import {userContext} from '../store/user';
 import {useContext} from 'react';
@@ -9,12 +9,22 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Preferences from './settings/preferences';
 import About from './settings/about';
 import Feedback from './settings/feedback';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const stack = createStackNavigator();
 
 // Settings page
 export function Main({navigation}: any) {
   const context = useContext(userContext);
+  const {theme, setTheme} = useContext(userContext);
+
+  async function activateDarkMode() {
+    if (theme == 'dark') {
+      setTheme('light');
+      return;
+    }
+    setTheme('dark');
+  }
 
   // Logout function
   function Logout() {
@@ -26,42 +36,76 @@ export function Main({navigation}: any) {
   return (
     <View style={styles.me}>
       <Text
-        style={{
-          padding: 40,
-          fontSize: 35,
-          fontWeight: 'bold',
-        }}>
+        style={[styles.title, {color: theme == 'light' ? 'black' : 'white'}]}>
         Settings
       </Text>
+
       <TouchableOpacity
-        style={styles.meTopButtons}
-        onPress={() => navigation.navigate('About')}>
-        <Text style={styles.meTopButtonText}>About</Text>
+        onPress={() => navigation.navigate('Preferences')}
+        style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            {color: theme == 'light' ? 'black' : 'white'},
+          ]}>
+          Preferences
+        </Text>
+        <Icon name="chevron-forward" size={22} color="#999" />
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.meTopButtons}
-        onPress={() => navigation.navigate('Preferences')}>
-        <Text style={styles.meTopButtonText}>Preferences</Text>
+        onPress={() => navigation.navigate('Feedback')}
+        style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            {color: theme == 'light' ? 'black' : 'white'},
+          ]}>
+          Feedback
+        </Text>
+        <Icon name="chevron-forward" size={22} color="#999" />
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.meTopButtons}
-        onPress={() => navigation.navigate('Feedback')}>
-        <Text style={styles.meTopButtonText}>Feedback</Text>
+        onPress={() => navigation.navigate('About')}
+        style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            {color: theme == 'light' ? 'black' : 'white'},
+          ]}>
+          About
+        </Text>
+        <Icon name="chevron-forward" size={22} color="#999" />
       </TouchableOpacity>
+      {/* <TouchableOpacity style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            { color: theme == "light" ? "black" : "white" },
+          ]}
+        >
+          Change Password
+        </Text>
+        <Icon name="chevron-forward" size={22} color="#999" />
+      </TouchableOpacity> */}
       <TouchableOpacity
-        style={styles.meTopButtons}
-        onPress={() => {
+        onPress={async () => {
           context.setAuthState(false);
-          AsyncStorage.removeItem('Data');
-        }}>
-        <Text style={styles.meTopButtonText}>Logout</Text>
+          await AsyncStorage.removeItem('Data');
+        }}
+        style={styles.button}>
+        <Text
+          style={[
+            styles.option,
+            {color: theme == 'light' ? 'black' : 'white'},
+          ]}>
+          Logout
+        </Text>
+        <Icon name="chevron-forward" size={22} color="#999" />
       </TouchableOpacity>
-      <Text
-        style={{
-          marginTop: 100,
-        }}>
-        Buddy v1.0
-      </Text>
+      <Text style={{
+        position:"absolute",
+        bottom:50
+      }}>Buddy v1.0</Text>
     </View>
   );
 }

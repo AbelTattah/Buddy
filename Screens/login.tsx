@@ -49,7 +49,7 @@ export default function Login({navigation}) {
           if (data.error == undefined) {
             SaveInStorage(data);
             context.setAuthState(true);
-            context.setName(suds["SNAME"]);
+            context.setName(suds['SNAME']);
             navigation.navigate('App1');
           } else {
             Alert.alert('Error', `${data.error.message}`, [
@@ -78,12 +78,14 @@ export default function Login({navigation}) {
 
   async function SaveInStorage(data: any) {
     try {
-      await AsyncStorage.setItem('Data', JSON.stringify({data:data,name:suds["SNAME"]}));
+      await AsyncStorage.setItem(
+        'Data',
+        JSON.stringify({data: data, name: suds['SNAME']}),
+      );
     } catch (error) {
       console.log(error);
     }
   }
-
 
   // function to read user data from firestore
   async function DataRead() {
@@ -132,12 +134,18 @@ export default function Login({navigation}) {
       <Text
         style={{
           borderRadius: 10,
-          fontSize: 40,
-          fontWeight: 'bold',
-          color: Colors.secondary100,
-          marginRight: 25,
+          marginTop:70,
+          fontSize:33,
+          marginRight:80,
+          color:"black"
         }}>
-        Login
+        Welcome Back
+      </Text>
+      <Text style={{
+        marginBottom:60,
+        marginRight:170
+      }}>
+        Let's Start Reading!
       </Text>
       <KeyboardAvoidingView style={styles.loginIn} behavior="padding">
         {/* Login inputs */}
@@ -165,13 +173,15 @@ export default function Login({navigation}) {
       {/* <Text style={styles.loginTextt1}>Forgot password?</Text>
       <Text style={styles.loginTextt2}>Privacy</Text> */}
       <View style={styles.regButtonView}>
+        <View style={styles.loginRegisterLines}></View>
         <Text>New to Buddy?</Text>
-        <TouchableOpacity
+        <View style={styles.loginRegisterLines}></View>
+      </View>
+      <TouchableOpacity
           style={styles.loginReg}
           onPress={() => navigation.navigate('Register')}>
           <Text style={styles.loginRegText}> Sign Up</Text>
         </TouchableOpacity>
-      </View>
       <>
         {regg === 'inp' ? (
           <>

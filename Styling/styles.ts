@@ -178,9 +178,8 @@ const styles = StyleSheet.create({
   },
   me: {
     backgroundColor: 'white',
-    marginTop: -3,
     flex: 6,
-    justifyContent: 'center',
+    paddingTop:100,
     alignItems: 'center'
   },
   meTopButtons: {
@@ -291,7 +290,6 @@ const styles = StyleSheet.create({
   loginMain: {
     backgroundColor: 'white',
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center'
   },
   loginIn: {
@@ -301,22 +299,55 @@ const styles = StyleSheet.create({
   loginButton: {
     height: 52,
     width:300,
-    backgroundColor: '#fff',
-    borderColor: '#00f',
-    elevation: 3,
-    borderWidth: 0.3,
-    borderRadius: 30,
+    backgroundColor: '#ddd',
+    borderRadius: 10,
     justifyContent: 'center',
     margin: 10,
     marginRight: 10,
   },
+  option: {
+    fontSize: 18,
+    fontWeight: "400",
+  },
+  button: {
+    width: "90%",
+    height: 70,
+    borderBottomStyle: "solid",
+    borderBottomWidth: 2,
+    borderBottomColor: "#ddd",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  theme: {
+    width: "90%",
+    height: 70,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 60,
+  },
+  title: {
+    marginBottom: 60,
+    marginTop:-50,
+    fontSize: 25,
+
+  },
+  loginRegisterLines:{
+    marginTop:10,
+    width:"19%",
+    margin:15,
+    height:"5%",
+    backgroundColor:"#ccc"
+  },
   loginTextIn: {
     borderRadius: 2,
     borderWidth: 1,
-    backgroundColor:Colors.primary300,
+    backgroundColor:"#fff",
     width: 300,
     height: 50,
     paddingHorizontal: 10,
+    borderColor:"#999",
     color: 'black'
   },
   regButtonView: {
@@ -325,7 +356,8 @@ const styles = StyleSheet.create({
   },
   loginReg: {
     backgroundColor: 'white',
-    borderRadius:30
+    marginTop:30,
+    marginBottom:30
   },
 
   // Register
@@ -352,7 +384,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
     paddingTop: 0,
-    justifyContent: 'center',
     alignItems: 'center'
   },
   ReggIn: {
@@ -368,16 +399,19 @@ const styles = StyleSheet.create({
   ReggTextIn: {
     borderRadius: 2,
     borderWidth: 1,
-    backgroundColor:Colors.primary300,
+    backgroundColor:"#fff",
     width: 300,
     height: 50,
     paddingHorizontal: 10,
+    borderColor:"#999",
     color: 'black'
   },
   loginButtonText: {
     textAlign: 'center',
     marginTop: 8,
-    color: 'black'
+    color: 'black',
+    fontSize:17,
+    fontWeight:"500"
   },
   ReggButtonView: {
     gap: 20,
@@ -393,7 +427,7 @@ const styles = StyleSheet.create({
   },
 
   loginRegText: {
-    color: '#2407f2'
+    color: '#000'
   },
 
   regCheck: {
