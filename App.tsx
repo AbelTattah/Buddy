@@ -18,7 +18,7 @@ import DocumentNav from './Documents/Document';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import Login from './Screens/login';
 import Register from './Screens/register';
-import Home from './Screens/Home';
+import Home from './Screens/home';
 import Icon from 'react-native-vector-icons/Ionicons';
 import History from './Screens/history';
 

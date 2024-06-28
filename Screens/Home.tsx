@@ -27,16 +27,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 
 const Stack = createStackNavigator();
-
-var titlesCache: any[] = [];
-var endpoints: any[] = [];
-var images: any[] = [];
-var first = true;
+var images:any[] = [];
 
 const Main = ({navigation}) => {
   const {name} = useContext(userContext);
   const [nameId, setName] = useState('');
-  const [titles, setTitles] = useState<any[]>([]);
+  const [book, setBook] = useState<any[]>([]);
   const [loadingExplore, setLoadingExplore] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<string>('');
   const [code, setCode] = useState('');
@@ -81,57 +77,12 @@ const Main = ({navigation}) => {
 
   const context = useContext(userContext);
 
-  // Get endpoints for getting pdfs from api
-  async function fetchGenre(bookCode: string) {
-    try {
-      const response = await axios.post(
-        'https://buddy-zpdh.onrender.com/geturl',
-        {
-          keywords: bookCode,
-        },
-      );
-      if (response.data['titles'][0] == 'Not found') {
-        setTitles([response.data['titles']]);
-        setLoading(true);
-        return;
-      }
-      // Filter pdf endpoints
-      for (var v = 0; v < response.data.links.length; v++) {
-        if (test.test(response.data.links[v])) {
-          endpoints.push(response.data.links[v]);
-          titlesCache.push(response.data.titles[v]);
-          imagesCache.push(response.data.images[v]);
-        }
-      }
-      setTitles([titles, ...titlesCache]);
-      setImages([images,...imagesCache]);
-      setLoading(true);
-      setTimeout(() => setLoadingExplore(false), 4000);
-    } catch (error) {
-      setLoading(true);
-      console.log(error);
-      setLoadingExplore(false);
-      // fetchGenre(code);
-      //setTitles(titles.push(['An error occured']));
-    }
-    setLoading(true);
-    console.log(images)
-  }
-
-  // Search for past questions
   const changeGenre =  async (bookCode:string) => {
-
     setLoading(true);
     setLoadingExplore(true);
 
-    if (titles[titles.length-1]=="An error occured") {
-      titles.splice(titles.length-1,1)
-    }
-
-    titlesCache = []
+    setBook([])
     images = []
-    setTitles([])
-    setCurrentPdf("")
 
     try {
       const response = await axios.post(
@@ -141,28 +92,44 @@ const Main = ({navigation}) => {
         },
       );
       if (response.data['titles'][0] == 'Not found') {
-        setTitles(['An error occured']);
+        setBook([
+          {
+            endpoint:"An error occured",
+            title:"An error occured",
+            image:"none"
+          }
+        ])
         return;
       }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
-          endpoints.push(response.data.links[v]);
-          titlesCache.push(response.data.titles[v]);
-          images.push(response.data.images[v]);
+          console.log("Image url:",response.data.images[v])
+          images.push(response.data.images[v])
+          setBook(book=>[...book,
+            {
+              endpoint:response.data.links[v],
+              title:response.data.titles[v]
+            }
+          ])
         }
       }
 
-      setTitles(titlesCache);
       setLoading(false);
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(false);
-      setTitles(['An error occured']);
+      setBook([
+        {
+          endpoint:"An error occured",
+          title:"An error occured",
+          image:"none"
+        }
+      ])
       console.log(error);
       setLoadingExplore(false);
       setTimeout(()=>{
-     if (titles[titles.length-1]=="An error occured") {
+     if (book[book.length-1]["title"]=="An error occured") {
         changeGenre(bookCode);
      } 
       },2000)
@@ -173,15 +140,6 @@ const Main = ({navigation}) => {
     setLoading(true);
     setLoadingExplore(true);
 
-    if (titles[titles.length-1]=="An error occured") {
-      titles.splice(titles.length-1,1)
-    }
-
-    titlesCache = []
-    images = []
-    setTitles([])
-    setCurrentPdf("")
-
     try {
       const response = await axios.post(
         'https://buddy-zpdh.onrender.com/geturl',
@@ -190,28 +148,43 @@ const Main = ({navigation}) => {
         },
       );
       if (response.data['titles'][0] == 'Not found') {
-        setTitles(['An error occured']);
+        setBook([
+          {
+            endpoint:"An error occured",
+            title:"An error occured",
+            image:"none"
+          }
+        ]);
         return;
       }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
-          endpoints.push(response.data.links[v]);
-          titlesCache.push(response.data.titles[v]);
-          images.push(response.data.images[v]);
+          images.push(response.data.images[v])
+          console.log("Image url:",response.data.images[v])
+          setBook(book=>[...book,
+            {
+              endpoint:response.data.links[v],
+              title:response.data.titles[v]
+            }
+          ])
         }
       }
-
-      setTitles(titlesCache);
       setLoading(false);
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(false);
-      setTitles(['An error occured']);
+      setBook([
+        {
+          endpoint:"An error occured",
+          title:"An error occured",
+          image:"none"
+        }
+      ])
       console.log(error);
       setLoadingExplore(false);
       setTimeout(()=>{
-     if (titles[titles.length-1]=="An error occured") {
+     if (book[book.length-1]["title"]=="An error occured") {
         initialLoad(bookCode);
      } 
       },2000)
@@ -223,8 +196,8 @@ const Main = ({navigation}) => {
     setLoading(true);
     setLoadingExplore(true);
 
-    if (titles[titles.length-1]=="An error occured") {
-      titles.splice(titles.length-1,1)
+    if (book[book.length-1]["title"]=="An error occured") {
+      book.splice(book.length-1,1)
     }
 
     try {
@@ -235,28 +208,44 @@ const Main = ({navigation}) => {
         },
       );
       if (response.data['titles'][0] == 'Not found') {
-        setTitles(['An error occured']);
+        setBook([
+          {
+            endpoint:"An error occured",
+            title:"An error occured",
+            image:"none"
+          }
+        ])
         return;
       }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
-          endpoints.push(response.data.links[v]);
-          titlesCache.push(response.data.titles[v]);
-          images.push(response.data.images[v]);
+          images.push(response.data.images[v])
+          console.log("Image url:",response.data.images[v])
+          setBook(book=>[...book,
+            {
+              endpoint:response.data.links[v],
+              title:response.data.titles[v]
+            }
+          ])
         }
       }
 
-      setTitles(titlesCache);
       setLoading(false);
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(false);
-      setTitles(['An error occured']);
+      setBook([
+        {
+          endpoint:"An error occured",
+          title:"An error occured",
+          image:"none"
+        }
+      ])
       console.log(error);
       setLoadingExplore(false);
       setTimeout(()=>{
-     if (titles[titles.length-1]=="An error occured") {
+     if (book[book.length-1]["title"]=="An error occured") {
         update(bookCode);
      } 
       },2000)
@@ -267,7 +256,7 @@ const Main = ({navigation}) => {
   // Navigate to pdf view
   const navigationHandler = () => {
     setTimeout(() => {
-      if (titles[0] == 'Not found' || titles[0] == 'An error occured') {
+      if (book[0]["title"] == 'Not found' || book[0]["title"] == 'An error occured') {
         return;
       } else {
         navigation.navigate('View', {
@@ -323,18 +312,25 @@ const Main = ({navigation}) => {
                   style={styles.featured} 
                   showsHorizontalScrollIndicator={false}
                   horizontal={true}>
-                  {titles.map((title, i) => (
+                  {book.map((book,i) => (
+                    <View 
+                    style={{
+                      flexDirection:"column"
+                    }}
+                    >
+                    <Image style={styles.profilePic1} source={{uri:images[i]?images[i]:"none"}} />
                     <BookCard
-                      bookTitle={title}
+                      bookTitle={book["title"]}
                       explore={false}
-                      image={images[i]}
+                      image={book["image"]}
                       func={() => {
-                        console.log(endpoints[i]);
-                        context.setPdf(endpoints[i]);
-                        setCurrentPdf(title);
+                        console.log(typeof(book["image"]))
+                        context.setPdf(book["endpoint"]);
+                        setCurrentPdf(book["title"]);
                         navigationHandler();
                       }}
                     />
+                    </View>
                   ))}
                 </ScrollView>
               </>
@@ -345,18 +341,27 @@ const Main = ({navigation}) => {
               <ActivityIndicator color={'#666'} size={40} />
             ) : (
               <>
-                {titles.map((title, i) => (
-                  <BookCard
-                    bookTitle={title}
-                    explore={true}
-                    func={() => {
-                      console.log(endpoints[i]);
-                      context.setPdf(endpoints[i]);
-                      setCurrentPdf(title);
-                      navigationHandler();
-                    }}
-                  />
-                ))}
+                  {book.map((book,i) => (
+                    <>
+                    <TouchableOpacity onPress={
+                      ()=>{
+                        context.setPdf(book["endpoint"]);
+                        setCurrentPdf(book["title"]);
+                        navigationHandler();
+                      }
+                    }>
+                    <Image style={styles.profilePic} source={{uri:images[i]?images[i]:"none"}} />
+                   <BookCard
+                      key={i}
+                      bookTitle={book["title"]}
+                      explore={true}
+                      image={book["image"]}
+                      func={() => {
+                      }}
+                    /> 
+                    </TouchableOpacity>
+                    </>
+                  ))}
               </>
             )}
           </>
@@ -393,6 +398,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  profilePic: {
+    width: "100%",
+    height: 370,
+    marginBottom:0,
+    borderRadius:10,
+    borderBottomRightRadius:0,
+    borderBottomLeftRadius:0
+  },
+  profilePic1: {
+    width: 160,
+    height: 170,
+    marginBottom:0,
+    borderRadius:10,
+    borderBottomRightRadius:0,
+    borderBottomLeftRadius:0
+  },
   main: {
     width: '90%',
     height: '100%',
@@ -406,10 +427,6 @@ const styles = StyleSheet.create({
   topCard: {
     width: '60%',
   },
-  profilePic: {
-    width: 30,
-    height: 32,
-  },
   filter: {
     height: 50,
     width: 48,
@@ -420,7 +437,8 @@ const styles = StyleSheet.create({
   },
   featured: {
     gap: 10,
-    height: 200,
+    height: 250,
+    marginBottom: 15,
   },
   greeting: {
     fontSize: 28,
@@ -434,7 +452,7 @@ const styles = StyleSheet.create({
   categories: {
     height: 220,
     gap: 10,
-    marginBottom: 30,
+    marginBottom: 10,
     marginTop: 13,
   },
   tasks: {
@@ -461,7 +479,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 20,
-    marginTop: 50,
+    marginTop: 10,
     marginBottom: 20,
     color: 'black',
     fontWeight: 'bold',

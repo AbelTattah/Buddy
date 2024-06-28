@@ -36,7 +36,7 @@ export default function About() {
       <View
         style={{
           width: 340,
-          gap: 40,
+          gap: 20,
           marginTop: 40,
         }}>
         <Markdown>{info1}</Markdown>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heading1: {
-    marginTop: 40,
+    marginTop: 20,
     fontSize: 24,
     marginLeft: 20,
     fontWeight: 'bold',
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: -28,
   },
   body: {
-    marginTop: 80,
+    marginTop: 10,
     marginLeft: 20,
     gap: 30,
   },

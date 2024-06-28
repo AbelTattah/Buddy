@@ -31,7 +31,6 @@ export default function Preferences() {
 
   return (
     <View style={style.container}>
-      <Text style={style.heading}>Customize</Text>
       <View style={style.buttons}>
       <TouchableOpacity style={styles.button}>
         <Text

@@ -105,7 +105,7 @@ export default function Register({navigation}) {
       <Text
         style={{
           borderRadius: 10,
-          marginTop:70,
+          marginTop:20,
           fontSize:33,
           marginRight:130,
           color:"black"
