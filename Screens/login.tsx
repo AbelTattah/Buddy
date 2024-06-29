@@ -58,7 +58,6 @@ export default function Login({navigation}) {
               },
             ]);
           }
-          console.log(data);
         })
         .catch(error => {
           Alert.alert('Error', error.message, [
@@ -139,7 +138,7 @@ export default function Login({navigation}) {
           marginRight:80,
           color:"black"
         }}>
-        Welcome Back
+        Welcome Back!
       </Text>
       <Text style={{
         marginBottom:60,

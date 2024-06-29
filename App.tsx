@@ -180,12 +180,12 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{title: 'Buddy', headerShadowVisible: false}}
+            options={{title: '', headerShadowVisible: false}}
           />
           <Stack.Screen
             name="Register"
             component={Register}
-            options={{title: 'Sign Up', headerShadowVisible: false}}
+            options={{title: '', headerShadowVisible: false}}
           />
           <Stack.Screen
             name="App1"

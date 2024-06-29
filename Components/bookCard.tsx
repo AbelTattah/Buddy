@@ -1,10 +1,15 @@
 // Book Card
 
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity,ActivityIndicator} from 'react-native';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import Colors from '../colors/colors';
 
-const BookCard = ({image, bookTitle, explore, func}: any) => {
+const BookCard = ({image, bookTitle, explore, func,loading}: any) => {
+  if (loading) {
+    return (
+    <ActivityIndicator color={'#666'} size={20} />
+    )
+  }
   if (explore == true) {
     return (
       <TouchableOpacity onPress={func}>
