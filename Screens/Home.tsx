@@ -26,6 +26,7 @@ import BookCard from '../Components/bookCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {FlatList} from 'react-native-gesture-handler';
 import {addToHistory} from './history';
+import { set } from 'firebase/database';
 
 const Stack = createStackNavigator();
 var images: any[] = [];
@@ -200,6 +201,12 @@ const Main = ({navigation}) => {
   };
 
   const initialLoad = async (bookCode: string, isfeatured: boolean) => {
+    images=[];
+    featuredImages=[];
+
+    setBook([]);
+    setFeatured([]);
+
     if (isfeatured) {
       setLoadingFeatured(true);
       try {
@@ -223,8 +230,8 @@ const Main = ({navigation}) => {
         for (var v = 0; v < response.data.links.length; v++) {
           if (test.test(response.data.links[v])) {
             featuredImages.push(response.data.images[v]);
-            setFeatured(book => [
-              ...book,
+            setFeatured(featured => [
+              ...featured,
               {
                 endpoint: response.data.links[v],
                 title: response.data.titles[v],
