@@ -4,18 +4,20 @@ import styles from '../../Styling/styles';
 import { userContext } from '../../store/user';
 
 export default function Preferences() {
-  const [isOneEnabled,setIsOneEnabled] = useState(false)
-  const [isTwoEnabled,setIsTwoEnabled] = useState(false)
   const {siv,setSiv,theme,setTheme} = useContext(userContext)
+  const [isOneEnabled,setIsOneEnabled] = useState(false)
+  const [isTwoEnabled,setIsTwoEnabled] = useState(theme == "dark" ? true : false)
 
   
   function activateDarkMode() {
-      if (isTwoEnabled) {
-        setIsTwoEnabled(false)
-      }
-      else {
-        setIsTwoEnabled(true)
-      }
+    if (theme == "dark") {
+      setTheme("light")
+      setIsTwoEnabled(false)
+    }
+    else {
+      setTheme("dark")
+      setIsTwoEnabled(true)
+    }
   }
 
   function hideStatusBar() {
@@ -30,7 +32,11 @@ export default function Preferences() {
   }
 
   return (
-    <View style={style.container}>
+    <View style={ {
+      flex: 1,
+      backgroundColor: theme == "light" ? "white" : "black",
+      alignItems: 'center',
+    }}>
       <View style={style.buttons}>
       <TouchableOpacity style={styles.button}>
         <Text
@@ -66,16 +72,12 @@ export default function Preferences() {
 }
 
 const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
   heading: {
     fontSize: 28,
   },
   buttons: {
     marginTop: 30,
+    width:"87%"
   },
   buttonInner: {
     flexDirection: 'row',

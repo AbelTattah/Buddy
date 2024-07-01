@@ -1,10 +1,12 @@
 // Book Card
 
 import {View, Text, Image, StyleSheet, TouchableOpacity,ActivityIndicator} from 'react-native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, { useContext} from 'react';
 import Colors from '../colors/colors';
+import { userContext } from '../store/user';
 
 const BookCard = ({image, bookTitle, explore, func,loading}: any) => {
+  const {theme} = useContext(userContext);
   if (loading) {
     return (
     <ActivityIndicator color={'#666'} size={20} />
@@ -13,25 +15,25 @@ const BookCard = ({image, bookTitle, explore, func,loading}: any) => {
   if (explore == true) {
     return (
       <TouchableOpacity onPress={func}>
-        <View style={styles.container}>
+        <View style={[styles.container,{backgroundColor:theme=="light"?"white":"black",borderColor:theme=="light"?"black":"white"}]}>
           {/* <Image source={{uri: image}} style={styles.profilePic} /> */}
-          <View style={styles.cardText}>
-            <Text style={styles.name}>{bookTitle}</Text>
+          <View style={[styles.cardText,{backgroundColor:theme=="light"?"white":"black",borderColor:theme=="light"?"black":"white"}]}>
+            <Text style={[styles.name,{color:theme=="light"?"black":"white"}]}>{bookTitle}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   } else {
     return (
-      <View style={styles.container2}>
-        <View style={styles.cardText}>
+      <View style={[styles.container2,{backgroundColor:theme=="light"?"white":"black",borderColor:theme=="light"?"black":"white"}]}>
+        <View style={[styles.cardText,{backgroundColor:theme=="light"?"white":"black",borderColor:theme=="light"?"black":"white"}]}>
           {/* <Image
                     source={image}
                     style={styles.profilePic2}
                   /> 
               */}
           <>
-            <Text style={styles.name}>{bookTitle}</Text>
+            <Text style={[styles.name,{color:theme=="light"?"black":"white"}]}>{bookTitle}</Text>
           </>
         </View>
       </View>
@@ -48,7 +50,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 10,
     width: '100%',
-    backgroundColor: 'white',
     borderWidth: 0.2,
     height: 100,
     marginRight: 20,
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius:0,
     width: 160,
     height: 80,
-    backgroundColor: 'white',
     marginRight: 20,
     borderRadius: 15,
     marginBottom: 25,
@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   name: {
-    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },

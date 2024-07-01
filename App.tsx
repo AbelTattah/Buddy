@@ -1,7 +1,15 @@
 import * as React from 'react'; // Importing components from react
 import {NavigationContainer} from '@react-navigation/native'; // Importing the NavigationContainer from @react-navigation/native
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Button, View, Text, Image, StatusBar, Alert} from 'react-native'; // Importing components from react-native
+import {
+  Button,
+  View,
+  Text,
+  Image,
+  StatusBar,
+  Alert,
+  Appearance,
+} from 'react-native'; // Importing components from react-native
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'; // Importing the createBottomTabNavigator from @react-navigation/bottom-tabs
 
 // Importing the styles from the styles file
@@ -22,7 +30,6 @@ import Home from './Screens/home';
 import Icon from 'react-native-vector-icons/Ionicons';
 import History from './Screens/history';
 
-
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
@@ -31,10 +38,15 @@ const Tab = createBottomTabNavigator();
 
 // Main Application
 function App1({navigation}: any) {
-  const {isLoggedIn, siv} = useContext(userContext);
+  const {isLoggedIn, siv, theme} = useContext(userContext);
+
   return (
     <>
-      <StatusBar hidden={siv} />
+      <StatusBar
+        backgroundColor={theme == 'light' ? 'white' : 'black'}
+        barStyle={theme == 'light' ? 'dark-content' : 'light-content'}
+        hidden={siv}
+      />
       {isLoggedIn ? (
         <NavigationContainer independent>
           <Tab.Navigator>
@@ -42,19 +54,21 @@ function App1({navigation}: any) {
               component={Home}
               name="Home"
               options={{
-                tabBarIcon: ()=><Icon name="document-outline" size={25} color="#555" />,
+                tabBarIcon: () => (
+                  <Icon name="document-outline" size={25} color="#555" />
+                ),
                 tabBarLabelStyle: {
                   fontSize: 12,
                   fontFamily: 'FredokaBold',
                 },
                 tabBarStyle: {
-                  height: 80,
+                  height: 63,
                   paddingBottom: 10,
-                  backgroundColor: 'white',
+                  backgroundColor: theme == 'light' ? 'white' : 'black',
                   borderTopWidth: 2,
                 },
                 headerShadowVisible: false,
-                headerTintColor: '#fff',
+                headerTintColor: theme == 'light' ? 'black' : 'white',
                 headerShown: false,
               }}
             />
@@ -62,15 +76,17 @@ function App1({navigation}: any) {
               component={History}
               name="History"
               options={{
-                tabBarIcon: ()=><Icon name="time-outline" size={25} color="#555" />,
+                tabBarIcon: () => (
+                  <Icon name="time-outline" size={25} color="#555" />
+                ),
                 tabBarLabelStyle: {
                   fontSize: 12,
                   fontFamily: 'FredokaBold',
                 },
                 tabBarStyle: {
-                  height: 80,
+                  height: 63,
                   paddingBottom: 10,
-                  backgroundColor: 'white',
+                  backgroundColor: theme == 'light' ? 'white' : 'black',
                   borderTopWidth: 2,
                 },
                 headerShadowVisible: false,
@@ -83,15 +99,17 @@ function App1({navigation}: any) {
               component={Settings}
               options={{
                 headerShown: false,
-                tabBarIcon: () =><Icon name="settings-outline" size={25} color="#555" />,
+                tabBarIcon: () => (
+                  <Icon name="settings-outline" size={25} color="#555" />
+                ),
                 tabBarLabelStyle: {
                   fontSize: 12,
                   fontFamily: 'FredokaBold',
                 },
                 tabBarStyle: {
-                  height: 80,
+                  height: 63,
                   paddingBottom: 10,
-                  backgroundColor: 'white',
+                  backgroundColor: theme == 'light' ? 'white' : 'black',
                   borderTopWidth: 2,
                 },
                 headerShadowVisible: false,
@@ -117,7 +135,7 @@ function App1({navigation}: any) {
           <Text>You are not Logged in!</Text>
           <Button
             title="Login Screen"
-            color={"#ccc"}
+            color={'#ccc'}
             onPress={() => navigation.navigate('Login')}
           />
         </View>
@@ -180,7 +198,17 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{title: '', headerShadowVisible: false}}
+            options={{
+              header:()=><Text style={{
+                fontFamily:'GillSans-Italic',
+                fontSize:20,
+                backgroundColor:'#fff',
+                marginLeft:20,
+                paddingTop:20,
+                color:'#555'
+              }}>Buddy</Text>,
+              headerShadowVisible: false
+            }}
           />
           <Stack.Screen
             name="Register"

@@ -25,13 +25,14 @@ import axios from 'axios';
 import BookCard from '../Components/bookCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {FlatList} from 'react-native-gesture-handler';
+import {addToHistory} from './history';
 
 const Stack = createStackNavigator();
 var images: any[] = [];
 var featuredImages: any[] = [];
 
 const Main = ({navigation}) => {
-  const {name} = useContext(userContext);
+  const {name, theme} = useContext(userContext);
   const [nameId, setName] = useState('');
   const [book, setBook] = useState<any[]>([]);
   const [featured, setFeatured] = useState<any[]>([]);
@@ -129,7 +130,7 @@ const Main = ({navigation}) => {
         setLoadingFeatured(false);
         setTimeout(() => {
           if (featured[featured.length - 1]['title'] == 'An error occured') {
-            setFeatured(book=>[...book.splice(featured.length - 1, 1)]);
+            setFeatured(book => [...book.splice(featured.length - 1, 1)]);
             changeGenre(bookCode, isfeatured);
           }
         }, 2000);
@@ -191,7 +192,7 @@ const Main = ({navigation}) => {
       setLoadingExplore(false);
       setTimeout(() => {
         if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book=>[...book.splice(book.length - 1, 1)]);
+          setBook(book => [...book.splice(book.length - 1, 1)]);
           changeGenre(bookCode, isfeatured);
         }
       }, 2000);
@@ -302,7 +303,7 @@ const Main = ({navigation}) => {
       setLoadingExplore(false);
       setTimeout(() => {
         if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book=>[...book.splice(book.length - 1, 1)]);
+          setBook(book => [...book.splice(book.length - 1, 1)]);
           initialLoad(bookCode, isfeatured);
         }
       }, 2000);
@@ -351,7 +352,8 @@ const Main = ({navigation}) => {
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(false);
-      setBook(book=>[...book,
+      setBook(book => [
+        ...book,
         {
           endpoint: 'An error occured',
           title: 'An error occured',
@@ -363,7 +365,7 @@ const Main = ({navigation}) => {
       setLoadingExplore(false);
       setTimeout(() => {
         if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book=>[...book.splice(book.length - 1, 1)]);
+          setBook(book => [...book.splice(book.length - 1, 1)]);
           update(bookCode, isfeatured);
         }
       }, 2000);
@@ -387,13 +389,21 @@ const Main = ({navigation}) => {
   };
 
   useEffect(() => {
+    let random = Math.floor(Math.random() * 6);
+    let random2 = Math.floor(Math.random() * 12);
     setName(name);
-    initialLoad('Science', false);
-    initialLoad('literature', true);
+    initialLoad(genre[random], false);
+    initialLoad(genre[random2], true);
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={{
+        backgroundColor: theme == 'light' ? 'white' : 'black',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
       <ScrollView
         onScroll={e => {
           let paddingToBottom = 10;
@@ -402,7 +412,7 @@ const Main = ({navigation}) => {
             e.nativeEvent.contentOffset.y >=
             e.nativeEvent.contentSize.height - paddingToBottom
           ) {
-            let random = Math.floor(Math.random() * (12));
+            let random = Math.floor(Math.random() * 12);
             console.log('Random number:', random);
             update(genre[random], false);
           }
@@ -411,15 +421,49 @@ const Main = ({navigation}) => {
         style={styles.main}>
         <View style={styles.header}>
           <View style={styles.topCard}>
-            <Text style={styles.greeting}>Hello, {nameId}!</Text>
+            <Text
+              style={{
+                fontSize: 28,
+                color: theme == 'light' ? 'black' : 'white',
+                fontWeight: '400',
+              }}>
+              Hello, {nameId}!
+            </Text>
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              let random = Math.floor(Math.random() * 6);
+              let random2 = Math.floor(Math.random() * 12);
+              setName(name);
+              initialLoad(genre[random], false);
+              initialLoad(genre[random2], true);
+            }}>
+            <Icon
+              name="refresh-outline"
+              size={32}
+              color={theme == 'light' ? '#555' : '#eee'}
+            />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-            <Icon name="search-outline" size={32} color="#555" />
+            <Icon
+              name="search-outline"
+              size={32}
+              color={theme == 'light' ? '#555' : '#eee'}
+            />
           </TouchableOpacity>
         </View>
         {loading == false ? (
           <>
-            <Text style={styles.sectionHeader}>Genre</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: 10,
+                marginBottom: 20,
+                color: theme == 'light' ? 'black' : 'white',
+                fontWeight: 'bold',
+              }}>
+              Genre
+            </Text>
             <ScrollView
               style={styles.genres}
               showsHorizontalScrollIndicator={false}
@@ -439,40 +483,20 @@ const Main = ({navigation}) => {
                 );
               })}
             </ScrollView>
-            <Text style={styles.sectionHeader}>Featured</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: 10,
+                marginBottom: 20,
+                color: theme == 'light' ? 'black' : 'white',
+                fontWeight: 'bold',
+              }}>
+              Featured
+            </Text>
             {loadingFeatured ? (
               <ActivityIndicator color={'#666'} size={40} />
             ) : (
               <>
-                {/* <ScrollView
-                  style={styles.featured} 
-                  showsHorizontalScrollIndicator={false}
-                  horizontal={true}>
-                  {featured.map((featured,i) => (
-                    <TouchableOpacity
-                    style={{
-                      flexDirection:"column"
-                    }}
-                    onPress={
-                      ()=> {
-                        context.setPdf(featured["endpoint"]);
-                        setCurrentPdf(featured["title"]);
-                        navigationHandler();
-                      }
-                    }
-                    >
-                    <Image style={styles.profilePic1} source={{uri:featuredImages[i]?featuredImages[i]:"none"}} />
-                    <BookCard
-                      bookTitle={featured["title"]}
-                      explore={false}
-                      image={featured["image"]}
-                      func={() => {
-                        console.log(featuredImages[i])
-                      }}
-                    />
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView> */}
                 <FlatList
                   data={featured}
                   keyExtractor={item => item.title}
@@ -486,6 +510,10 @@ const Main = ({navigation}) => {
                         onPress={() => {
                           context.setPdf(item['endpoint']);
                           setCurrentPdf(item['title']);
+                          addToHistory({
+                            name: item['title'],
+                            endpoint: item['endpoint'],
+                          });
                           navigationHandler();
                         }}>
                         <Image
@@ -510,35 +538,20 @@ const Main = ({navigation}) => {
                 />
               </>
             )}
-            <Text style={styles.sectionHeader}>Explore</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: 10,
+                marginBottom: 20,
+                color: theme == 'light' ? 'black' : 'white',
+                fontWeight: 'bold',
+              }}>
+              Explore
+            </Text>
             {/*Explore */}
             {loadingExplore ? (
               <ActivityIndicator color={'#666'} size={40} />
             ) : (
-              // <>
-              //   {book.map((book, i) => (
-              //     <>
-              //       <TouchableOpacity
-              //         onPress={() => {
-              //           context.setPdf(book['endpoint']);
-              //           setCurrentPdf(book['title']);
-              //           navigationHandler();
-              //         }}>
-              //         <Image
-              //           style={styles.profilePic}
-              //           source={{uri: images[i] ? images[i] : 'none'}}
-              //         />
-              //         <BookCard
-              //           key={i}
-              //           bookTitle={book['title']}
-              //           explore={true}
-              //           image={book['image']}
-              //           func={() => {}}
-              //         />
-              //       </TouchableOpacity>
-              //     </>
-              //   ))}
-              // </>
               <FlatList
                 data={book}
                 keyExtractor={item => item.title}
@@ -548,6 +561,10 @@ const Main = ({navigation}) => {
                       onPress={() => {
                         context.setPdf(item['endpoint']);
                         setCurrentPdf(item['title']);
+                        addToHistory({
+                          name: item['title'],
+                          endpoint: item['endpoint'],
+                        });
                         navigationHandler();
                       }}>
                       <Image
@@ -575,6 +592,7 @@ const Main = ({navigation}) => {
 };
 
 const Home = ({navigation}) => {
+  const {theme} = useContext(userContext);
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator>
@@ -583,8 +601,26 @@ const Home = ({navigation}) => {
           component={Main}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="Search" component={DocumentNav} />
-        <Stack.Screen name="View" component={DocumentRenderer} />
+        <Stack.Screen
+          name="Search"
+          options={{
+            headerStyle: {
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
+            },
+            headerTintColor: theme == 'light' ? '#000' : '#fff',
+          }}
+          component={DocumentNav}
+        />
+        <Stack.Screen
+          options={{
+            headerStyle: {
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
+            },
+            headerTintColor: theme == 'light' ? '#000' : '#fff',
+          }}
+          name="View"
+          component={DocumentRenderer}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -677,12 +713,5 @@ const styles = StyleSheet.create({
     borderWidth: 0.167,
     borderStyle: 'solid',
     borderColor: '#888',
-  },
-  sectionHeader: {
-    fontSize: 20,
-    marginTop: 10,
-    marginBottom: 20,
-    color: 'black',
-    fontWeight: 'bold',
   },
 });

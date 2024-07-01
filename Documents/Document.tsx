@@ -9,16 +9,16 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native'; // Importing components from react-native
-import React, {useState, useContext, useEffect,useRef} from 'react'; // Importing the useState hook from react
+import React, {useState, useContext, useEffect, useRef} from 'react'; // Importing the useState hook from react
 import axios from 'axios'; // Importing axios
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack'; // Importing the createNativeStackNavigator from @react-navigation/stack
 import {NavigationContainer} from '@react-navigation/native'; // Importing the NavigationContainer from @react-navigation/native
 import {userContext} from '../store/user';
-import { useWindowDimensions} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import DocumentRender from './DocumentRender';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { addToHistory } from '../Screens/history';
 
 /*
 TODO: 
@@ -43,8 +43,9 @@ const DocumentSearch = ({navigation}: any) => {
   const [userComms, setComms] = useState<string>('');
 
   const context = useContext(userContext);
+  const {theme} = useContext(userContext);
   const ref = useRef();
-  
+
   //Pdf regex http://207.211.176.165/buddy
   const test = /pdf/;
 
@@ -53,13 +54,16 @@ const DocumentSearch = ({navigation}: any) => {
   // Get endpoints for getting pdfs from api
   async function getEndpoints(bookCode: string) {
     try {
-      const response = await axios.post('https://buddy-zpdh.onrender.com/geturl', {
-        keywords: bookCode,
-      });
-      if (response.data["titles"][0]=="Not found") {
-        setTitles([response.data["titles"]])
-        setLoading(false)
-        return
+      const response = await axios.post(
+        'https://buddy-zpdh.onrender.com/geturl',
+        {
+          keywords: bookCode,
+        },
+      );
+      if (response.data['titles'][0] == 'Not found') {
+        setTitles([response.data['titles']]);
+        setLoading(false);
+        return;
       }
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
@@ -70,11 +74,11 @@ const DocumentSearch = ({navigation}: any) => {
         }
       }
       setTitles(titlesCache);
-      setLoading(false)
-      console.log(endpoints)
+      setLoading(false);
+      console.log(endpoints);
     } catch (error) {
       setLoading(false);
-      console.log(error)
+      console.log(error);
       setTitles(['An error occured']);
     }
     setLoading(false);
@@ -82,20 +86,20 @@ const DocumentSearch = ({navigation}: any) => {
 
   // Search for past questions
   const searchHandler = () => {
-    if (code=="") {
-      Alert.alert('Book Name Empty',"Enter a book name to continue",[
+    if (code == '') {
+      Alert.alert('Book Name Empty', 'Enter a book name to continue', [
         {
-          text:'Ok'
-        }
-      ])
-    }
-    else {
-      setComms("")
-      this.textInput.clear()
-      setCode("")
+          text: 'Ok',
+        },
+      ]);
+    } else {
+      setComms('');
+      this.textInput.clear();
+      setCode('');
       setTitles([]);
-      titlesCache=[]
-      endpoints=[]
+      titlesCache = [];
+      endpoints = [];
+      images = [];
       setLoading(true);
       getEndpoints(code);
     }
@@ -105,9 +109,8 @@ const DocumentSearch = ({navigation}: any) => {
   const navigationHandler = () => {
     setTimeout(() => {
       if (titles[0] == 'Not found' || titles[0] == 'An error occured') {
-        return
-      }
-      else {
+        return;
+      } else {
         navigation.navigate('DocumentView', {
           book: currentPdf,
         });
@@ -115,19 +118,18 @@ const DocumentSearch = ({navigation}: any) => {
     }, 1000);
   };
 
-
   return (
     <View
       style={{
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 10,
-        backgroundColor: '#fff',
+        backgroundColor: theme == 'dark' ? '#000' : '#fff',
       }}>
       <Text>{userComms}</Text>
-      <View style={styles.search}>
+      <View style={[styles.search,{borderColor:theme=="light"?"grey":"white"}]}>
         <TextInput
-          ref={(input) => {
+          ref={input => {
             this.textInput = input;
           }}
           style={{
@@ -136,7 +138,8 @@ const DocumentSearch = ({navigation}: any) => {
             marginTop: 73,
             marginBottom: 30,
             padding: 10,
-            color: 'black',
+            color:theme=="light"?"#000":"#fff",
+            backgroundColor:theme=="light"?"#fff":"#000",
           }}
           placeholder="       Enter book name"
           onChangeText={text => {
@@ -145,12 +148,14 @@ const DocumentSearch = ({navigation}: any) => {
         <TouchableOpacity
           onPress={() => searchHandler()}
           style={styles.searchButton}>
-    <Icon name="search-outline" size={32} color="#555" />
-
+          <Icon name="search-outline" size={32} color="#555" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.resultsCount}>
-        Results:{titles[0] == 'Not found'|| titles[0]=='An error occured' ? 0 : titles.length}
+      <Text style={[styles.resultsCount,{backgroundColor:theme=="light"?"white":"black", color:theme=="light"?"black":"white"}]}>
+        Results:
+        {titles[0] == 'Not found' || titles[0] == 'An error occured'
+          ? 0
+          : titles.length}
       </Text>
       <View>
         <View
@@ -166,7 +171,7 @@ const DocumentSearch = ({navigation}: any) => {
               <View
                 style={{
                   flex: 1,
-                  backgroundColor: '#fff',
+                  backgroundColor: theme=="light"?"white":"black",
                   borderRadius: 20,
                   padding: 10,
                   display: 'flex',
@@ -179,7 +184,7 @@ const DocumentSearch = ({navigation}: any) => {
               <>
                 <ScrollView
                   style={{
-                    backgroundColor: '#fff',
+                    backgroundColor:theme=="light"?"white":"black",
                     borderRadius: 20,
                     flexDirection: 'column',
                     gap: 20,
@@ -190,14 +195,14 @@ const DocumentSearch = ({navigation}: any) => {
                       style={{
                         width: width < 320 ? 160 : width < 400 ? 250 : 310,
                         height: 374,
-                        backgroundColor: '#fff',
-                        borderColor: 'black',
+                        backgroundColor: theme=="light"?"white":"black",
+                        borderColor: theme=="light"?"black":"white",
                         elevation: 3,
                         borderWidth: 0.3,
                         borderRadius: 10,
                         justifyContent: 'center',
-                        alignItems:"center",
-                        overflow:"hidden",
+                        alignItems: 'center',
+                        overflow: 'hidden',
                         margin: 10,
                         marginRight: 10,
                       }}
@@ -205,23 +210,25 @@ const DocumentSearch = ({navigation}: any) => {
                         console.log(endpoints[i]);
                         context.setPdf(endpoints[i]);
                         setCurrentPdf(title);
+                        addToHistory({name:title,endpoint:endpoints[i]})
                         navigationHandler();
                       }}>
                       <Image
                         source={{uri: images[i]}}
                         style={{
                           width: width < 320 ? 160 : width < 400 ? 250 : 310,
-                          height:"75%",
+                          height: '75%',
                           borderRadius: 10,
-                          borderBottomRightRadius:0,
-                          borderBottomLeftRadius:0,
-                          marginBottom:50,
-                          marginTop:-5
+                          borderBottomRightRadius: 0,
+                          borderBottomLeftRadius: 0,
+                          marginBottom: 50,
+                          marginTop: -5,
                         }}
                       />
                       <Text
                         style={{
                           textAlign: 'center',
+                          color:theme=="light"?"black":"white"
                         }}>
                         {title}
                       </Text>
@@ -238,13 +245,18 @@ const DocumentSearch = ({navigation}: any) => {
 };
 
 const DocumentNav = ({navigation}) => {
+  const {theme} = useContext(userContext)
   return (
     <NavigationContainer independent>
       <Stack.Navigator>
         <Stack.Screen
           name="DocumentSearch"
           options={{
-            headerShown: false
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: theme=="light"?"#fff":"#000",
+            },
+            headerTintColor:theme=="light"?"#000":"#fff"
           }}
           component={DocumentSearch}
         />
@@ -254,7 +266,12 @@ const DocumentNav = ({navigation}) => {
             const title = route.params.book;
             return {
               title: title,
+              headerStyle: {
+                backgroundColor: theme=="light"?"#fff":"#000",
+              },
+              headerTintColor:theme=="light"?"#000":"#fff"
             };
+            
           }}
           component={DocumentRender}
         />
@@ -281,7 +298,6 @@ const styles = StyleSheet.create({
     height: 120,
     marginBottom: 20,
     marginTop: -2,
-    borderColor: 'grey',
     borderBottomWidth: 1,
   },
   searchButton: {

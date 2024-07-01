@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
   me: {
     backgroundColor: 'white',
     flex: 6,
+    width:"100%",
     paddingTop:100,
     alignItems: 'center'
   },
@@ -300,6 +301,9 @@ const styles = StyleSheet.create({
     height: 52,
     width:300,
     backgroundColor: '#ddd',
+    elevation:2,
+    borderWidth:0.4,
+    borderColor:"#00f",
     borderRadius: 10,
     justifyContent: 'center',
     margin: 10,
@@ -310,7 +314,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   button: {
-    width: "90%",
+    width: "100%",
     height: 70,
     borderBottomStyle: "solid",
     borderBottomWidth: 2,

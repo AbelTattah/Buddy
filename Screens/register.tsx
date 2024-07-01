@@ -114,7 +114,8 @@ export default function Register({navigation}) {
       </Text>
       <Text style={{
         marginBottom:30,
-        marginRight:150
+        marginRight:100,
+        fontSize:20
       }}>
         Free and Instant books
       </Text>

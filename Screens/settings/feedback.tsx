@@ -1,9 +1,10 @@
 import {View, Text, TextInput, StyleSheet, Image, Alert} from 'react-native';
-import React, { useState } from 'react';
+import React, { useState ,useContext} from 'react';
 import {TouchableOpacity} from 'react-native';
 import { doc } from 'firebase/firestore';
 import { setDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { userContext } from '../../store/user';
 
 
 const Feedback = () => {
@@ -15,6 +16,8 @@ const Feedback = () => {
     1,
     1
   ])
+
+  const {theme} = useContext(userContext)
 
   function setOpacity(indexx:number) {
     setOpacities(previous=>previous.map((item,index)=>{
@@ -51,10 +54,10 @@ const Feedback = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>User Feedback</Text>
-      <View style = {styles.emojisMain}>
-        <Text>What was your experience?</Text>
+    <View style={[styles.container,{backgroundColor:theme=="light"?"white":"black"}]}>
+      <Text style={[styles.heading,{color:theme=="light"?"black":"white"}]}>User Feedback</Text>
+      <View style = {[styles.emojisMain]}>
+        <Text style ={{color:theme=="light"?"black":"white"}}>What was your experience?</Text>
         <View style={styles.emojis}>
           <TouchableOpacity onPress={() =>{ 
             setEmotion('sad')
@@ -115,8 +118,10 @@ const Feedback = () => {
         </View>
       </View>
       <View style={styles.emojisMain}>
-        <Text style={styles.suggestionsHeader}>Any Suggestions?</Text>
-        <TextInput onChangeText={(e)=>setSuggestion(e)} style={styles.suggestion}></TextInput>
+        <Text style={[styles.suggestionsHeader,{color:theme=="light"?"black":"white"}]}>Any Suggestions?</Text>
+        <TextInput
+        style ={{color:theme=="light"?"white":"black",borderColor:"grey"}}
+        onChangeText={(e)=>setSuggestion(e)} style={styles.suggestion}></TextInput>
         <TouchableOpacity onPress={()=>sendFeedback()} style={styles.send}>
           <Text style={styles.heading}>Send</Text>
         </TouchableOpacity>
@@ -132,7 +137,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#fff'
   },
   heading: {
     fontWeight: 'bold',

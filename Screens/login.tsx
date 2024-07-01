@@ -135,14 +135,15 @@ export default function Login({navigation}) {
           borderRadius: 10,
           marginTop:70,
           fontSize:33,
-          marginRight:80,
+          marginRight:160,
           color:"black"
         }}>
-        Welcome Back!
+        Login and 
       </Text>
       <Text style={{
         marginBottom:60,
-        marginRight:170
+        marginRight:100,
+        fontSize:24
       }}>
         Let's Start Reading!
       </Text>

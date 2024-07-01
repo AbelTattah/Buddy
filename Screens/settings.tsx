@@ -34,49 +34,58 @@ export function Main({navigation}: any) {
 
   // Render the page
   return (
-    <View style={styles.me}>
+    <View
+      style={{
+        backgroundColor: theme == 'light' ? 'white' : 'black',
+        flex: 1,
+        alignItems: 'center',
+        paddingTop: 120,
+      }}>
       <Text
         style={[styles.title, {color: theme == 'light' ? 'black' : 'white'}]}>
         Settings
       </Text>
-
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Preferences')}
-        style={styles.button}>
-        <Text
-          style={[
-            styles.option,
-            {color: theme == 'light' ? 'black' : 'white'},
-          ]}>
-          Preferences
-        </Text>
-        <Icon name="chevron-forward" size={22} color="#999" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Feedback')}
-        style={styles.button}>
-        <Text
-          style={[
-            styles.option,
-            {color: theme == 'light' ? 'black' : 'white'},
-          ]}>
-          Feedback
-        </Text>
-        <Icon name="chevron-forward" size={22} color="#999" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('About')}
-        style={styles.button}>
-        <Text
-          style={[
-            styles.option,
-            {color: theme == 'light' ? 'black' : 'white'},
-          ]}>
-          About
-        </Text>
-        <Icon name="chevron-forward" size={22} color="#999" />
-      </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.button}>
+      <View
+        style={{
+          width: '87%',
+        }}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Preferences')}
+          style={styles.button}>
+          <Text
+            style={[
+              styles.option,
+              {color: theme == 'light' ? 'black' : 'white'},
+            ]}>
+            Preferences
+          </Text>
+          <Icon name="chevron-forward" size={22} color="#999" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Feedback')}
+          style={styles.button}>
+          <Text
+            style={[
+              styles.option,
+              {color: theme == 'light' ? 'black' : 'white'},
+            ]}>
+            Feedback
+          </Text>
+          <Icon name="chevron-forward" size={22} color="#999" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('About')}
+          style={styles.button}>
+          <Text
+            style={[
+              styles.option,
+              {color: theme == 'light' ? 'black' : 'white'},
+            ]}>
+            About
+          </Text>
+          <Icon name="chevron-forward" size={22} color="#999" />
+        </TouchableOpacity>
+        {/* <TouchableOpacity style={styles.button}>
         <Text
           style={[
             styles.option,
@@ -87,30 +96,36 @@ export function Main({navigation}: any) {
         </Text>
         <Icon name="chevron-forward" size={22} color="#999" />
       </TouchableOpacity> */}
-      <TouchableOpacity
-        onPress={async () => {
-          context.setAuthState(false);
-          await AsyncStorage.removeItem('Data');
-        }}
-        style={styles.button}>
-        <Text
-          style={[
-            styles.option,
-            {color: theme == 'light' ? 'black' : 'white'},
-          ]}>
-          Logout
-        </Text>
-        <Icon name="chevron-forward" size={22} color="#999" />
-      </TouchableOpacity>
-      <Text style={{
-        position:"absolute",
-        bottom:50
-      }}>Buddy v1.0</Text>
+        <TouchableOpacity
+          onPress={async () => {
+            context.setAuthState(false);
+            await AsyncStorage.removeItem('Data');
+          }}
+          style={styles.button}>
+          <Text
+            style={[
+              styles.option,
+              {color: theme == 'light' ? 'black' : 'white'},
+            ]}>
+            Logout
+          </Text>
+          <Icon name="chevron-forward" size={22} color="#999" />
+        </TouchableOpacity>
+      </View>
+      <Text
+        style={{
+          position: 'absolute',
+          bottom: 50,
+          color: theme == 'light' ? 'black' : 'white',
+        }}>
+        Buddy v1.0
+      </Text>
     </View>
   );
 }
 
 export default function Settings() {
+  const {theme} = useContext(userContext);
   return (
     <NavigationContainer independent={true}>
       <stack.Navigator>
@@ -121,9 +136,36 @@ export default function Settings() {
             headerShown: false,
           }}
         />
-        <stack.Screen name="Preferences" component={Preferences} />
-        <stack.Screen name="About" component={About} />
-        <stack.Screen name="Feedback" component={Feedback} />
+        <stack.Screen
+          name="Preferences"
+          options={{
+            headerStyle: {
+              backgroundColor: theme == 'light' ? 'white' : 'black',
+            },
+            headerTintColor: theme == 'light' ? 'black' : 'white',
+          }}
+          component={Preferences}
+        />
+        <stack.Screen
+          name="About"
+          options={{
+            headerStyle: {
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
+            },
+            headerTintColor: theme == 'light' ? '#000' : '#fff',
+          }}
+          component={About}
+        />
+        <stack.Screen
+          options={{
+            headerStyle: {
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
+            },
+            headerTintColor: theme == 'light' ? '#000' : '#fff',
+          }}
+          name="Feedback"
+          component={Feedback}
+        />
       </stack.Navigator>
     </NavigationContainer>
   );
