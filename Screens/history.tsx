@@ -125,9 +125,9 @@ const HistMain = ({navigation}) => {
       </>
       <Text style={{
           marginTop: 35,
-          fontSize: 20,
+          fontSize: 23,
           color:theme=="light"?"black":"white",
-          fontWeight: '500',
+          fontWeight: '900',
       }}>Recently Opened</Text>
       <View style={{
                     marginTop: 20,
@@ -137,30 +137,32 @@ const HistMain = ({navigation}) => {
                     alignItems: 'center'
       }}>
       {history ? (
+        <>
         <FlatList
           style={{
             marginTop: 20,
             width:"86%"
           }}
+          showsVerticalScrollIndicator={false}
           data={Object.keys(history).reverse()}
           renderItem={({item}) => {
             return (
               <TouchableOpacity
                 onLongPress={() => {
-                  setMarked(marked => [...marked, item]);
+                  removeHistory(item);
                 }}
                 onPress={() => {
                   const url:any = searchHistory(item)
                   console.log("URL: ", history[item])
                   setPdf(history[item]);
-                  navigation.navigate('View');
+                  navigation.navigate('View',{book:item});
                   // if (marked.filter((name)=>name==item) == null) {
                   //   setPdf(searchHistory(item));
                   // } else {
                   //   removeMarked(item);
                   // }
                 }}
-                style={styles.button}>
+                style={styles.button1}>
                 <Text
                 style={{
                   color:theme=="light"?"black":"white",
@@ -173,6 +175,12 @@ const HistMain = ({navigation}) => {
           }}
           keyExtractor={item => item}
         />
+        <Text style={{
+          position:"absolute",
+          color:"#f007",
+          bottom:10
+        }}>Hold to delete</Text>
+        </>
       ) : (
         <Text>No recent books</Text>
       )}
@@ -182,6 +190,8 @@ const HistMain = ({navigation}) => {
 };
 
 const History = ({navigation}) => {
+  const {setPdf,theme} = useContext(userContext);
+
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator>
@@ -190,7 +200,19 @@ const History = ({navigation}) => {
           component={HistMain}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="View" component={DocumentRenderer} />
+        <Stack.Screen name="View"
+          options={({route}) => {
+            const title = route.params.book;
+            return {
+              title: title,
+              headerStyle: {
+                backgroundColor: theme=="light"?"#fff":"#000",
+              },
+              headerTintColor:theme=="light"?"#000":"#fff"
+            };
+            
+          }}
+        component={DocumentRenderer} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -121,6 +121,7 @@ const DocumentSearch = ({navigation}: any) => {
   return (
     <View
       style={{
+        flex:1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 10,
@@ -157,12 +158,10 @@ const DocumentSearch = ({navigation}: any) => {
           ? 0
           : titles.length}
       </Text>
-      <View>
         <View
           style={{
-            height: height < 550 ? 340 : height < 750 ? 420 : 540,
+            height:"80%",
             width: width < 320 ? 200 : width < 400 ? 300 : 350,
-            marginBottom: 230,
             justifyContent: 'center',
             alignItems: 'center',
           }}>
@@ -181,14 +180,15 @@ const DocumentSearch = ({navigation}: any) => {
                 <ActivityIndicator size="large" />
               </View>
             ) : (
-              <>
+              <View style={{
+                flex:1,
+                backgroundColor:theme=="light"?"white":"#00f",
+                borderRadius: 20,
+                flexDirection: 'column',
+                gap: 20,
+              }}>
                 <ScrollView
-                  style={{
-                    backgroundColor:theme=="light"?"white":"black",
-                    borderRadius: 20,
-                    flexDirection: 'column',
-                    gap: 20,
-                  }}>
+                  >
                   {titles.map((title, i) => (
                     <TouchableOpacity
                       key={i}
@@ -235,11 +235,10 @@ const DocumentSearch = ({navigation}: any) => {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-              </>
+              </View>
             )}
           </>
         </View>
-      </View>
     </View>
   );
 };
@@ -295,8 +294,10 @@ const styles = StyleSheet.create({
   search: {
     flexDirection: 'row',
     width: 300,
-    height: 120,
+    height:125,
     marginBottom: 20,
+    position:"absolute",
+    top:-50,
     marginTop: -2,
     borderBottomWidth: 1,
   },

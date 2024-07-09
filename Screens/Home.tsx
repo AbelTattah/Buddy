@@ -41,6 +41,8 @@ const Main = ({navigation}) => {
   const [loadingFeatured, setLoadingFeatured] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<string>('');
   const [code, setCode] = useState('');
+  const [updating,setUpdating] = useState(false);
+
 
   //Responsiveness
   const {width, height} = useWindowDimensions();
@@ -321,7 +323,7 @@ const Main = ({navigation}) => {
     if (book[book.length - 1]['title'] == 'An error occured') {
       book.splice(book.length - 1, 1);
     }
-
+    setUpdating(true);
     try {
       const response = await axios.post(
         'https://buddy-zpdh.onrender.com/geturl',
@@ -356,7 +358,7 @@ const Main = ({navigation}) => {
       }
 
       setLoading(false);
-      setTimeout(() => setLoadingExplore(false), 4000);
+      setTimeout(() => setUpdating(false), 2000);
     } catch (error) {
       setLoading(false);
       setBook(book => [
@@ -370,6 +372,7 @@ const Main = ({navigation}) => {
       ]);
       console.log(error);
       setLoadingExplore(false);
+      setTimeout(() => setUpdating(false), 2000);
       setTimeout(() => {
         if (book[book.length - 1]['title'] == 'An error occured') {
           setBook(book => [...book.splice(book.length - 1, 1)]);
@@ -397,7 +400,7 @@ const Main = ({navigation}) => {
 
   useEffect(() => {
     let random = Math.floor(Math.random() * 6);
-    let random2 = Math.floor(Math.random() * 12);
+    let random2 = Math.floor(Math.random() * (12 - 6 + 1)) + 6;
     setName(name);
     initialLoad(genre[random], false);
     initialLoad(genre[random2], true);
@@ -589,6 +592,7 @@ const Main = ({navigation}) => {
                 }}
               />
             )}
+            <>{updating && <ActivityIndicator color={'#666'} size={40} />}</>
           </>
         ) : (
           <ActivityIndicator color={'#666'} size={40} />
@@ -610,21 +614,20 @@ const Home = ({navigation}) => {
         />
         <Stack.Screen
           name="Search"
-          options={{
-            headerStyle: {
-              backgroundColor: theme == 'light' ? '#fff' : '#000',
-            },
-            headerTintColor: theme == 'light' ? '#000' : '#fff',
-          }}
           component={DocumentNav}
         />
         <Stack.Screen
-          options={{
-            headerStyle: {
-              backgroundColor: theme == 'light' ? '#fff' : '#000',
-            },
-            headerTintColor: theme == 'light' ? '#000' : '#fff',
-          }}
+            options={({route}) => {
+              const title = route.params.book;
+              return {
+                title: title,
+                headerStyle: {
+                  backgroundColor: theme=="light"?"#fff":"#000",
+                },
+                headerTintColor:theme=="light"?"#000":"#fff"
+              };
+              
+            }}
           name="View"
           component={DocumentRenderer}
         />

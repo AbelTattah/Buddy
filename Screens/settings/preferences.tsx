@@ -4,7 +4,7 @@ import styles from '../../Styling/styles';
 import { userContext } from '../../store/user';
 
 export default function Preferences() {
-  const {siv,setSiv,theme,setTheme} = useContext(userContext)
+  const {siv,setSiv,theme,statusBar,setStatusBar,setTheme} = useContext(userContext)
   const [isOneEnabled,setIsOneEnabled] = useState(false)
   const [isTwoEnabled,setIsTwoEnabled] = useState(theme == "dark" ? true : false)
 
@@ -21,13 +21,13 @@ export default function Preferences() {
   }
 
   function hideStatusBar() {
-      if (isOneEnabled) {
-        setIsOneEnabled(false)
-        setSiv(false)
+      if (statusBar) {
+        setStatusBar(false)
+        setSiv(true)
       }
       else {
-        setIsOneEnabled(true)
-        setSiv(true)
+        setStatusBar(true)
+        setSiv(false)
       }
   }
 
@@ -48,7 +48,7 @@ export default function Preferences() {
           Hide Status bar
         </Text>
         <Switch
-          value={isOneEnabled}
+          value={statusBar}
           onValueChange={hideStatusBar}
         />
       </TouchableOpacity>

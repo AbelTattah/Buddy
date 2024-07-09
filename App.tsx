@@ -29,6 +29,7 @@ import Register from './Screens/register';
 import Home from './Screens/home';
 import Icon from 'react-native-vector-icons/Ionicons';
 import History from './Screens/history';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -38,8 +39,36 @@ const Tab = createBottomTabNavigator();
 
 // Main Application
 function App1({navigation}: any) {
-  const {isLoggedIn, siv, theme} = useContext(userContext);
+  const {isLoggedIn,setTheme, siv,setSiv, theme} = useContext(userContext);
 
+  async function getColorScheme() {
+    const colorScheme:any = await Appearance.getColorScheme()
+    console.log("Theme: ",colorScheme)
+
+    if (colorScheme=="dark") {
+      setTheme("dark")
+    }
+    else {
+      setTheme("light")
+    }
+  }
+
+  async function getStatusBar() {
+    const status = await AsyncStorage.getItem("status")
+
+    if (status == "true") {
+      setSiv(true)
+    }
+    else {
+      setSiv(false)
+    }
+
+  }
+
+  React.useEffect(()=>{
+    getColorScheme()
+    getStatusBar()
+  },[])
   return (
     <>
       <StatusBar
@@ -203,7 +232,7 @@ export default function App() {
                 fontFamily:'GillSans-Italic',
                 fontSize:20,
                 backgroundColor:'#fff',
-                marginLeft:20,
+                paddingLeft:20,
                 paddingTop:20,
                 color:'#555'
               }}>Buddy</Text>,

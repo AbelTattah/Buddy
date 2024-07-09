@@ -7,6 +7,8 @@ export const userContext = createContext({
     isLoggedIn:false,
     pdf:"",
     theme:"light",
+    statusBar:false,
+    setStatusBar:(value:boolean)=>{},
     setTheme:(sid:string)=>{},
     setSiv:(sid:boolean)=>{},
     setName:(name:string) =>{},
@@ -21,6 +23,12 @@ function UserContextProvider({children}:any) {
     const [isLoggedIn,setAUTHSTATE] = useState(false)
     const [pdf,setPDF] = useState("")
     const [theme,setTHEME] = useState("light")
+    const [statusBar,setStatusbar] = useState(false)
+
+    async function setStatusBar(value:boolean) {
+        setStatusbar(value)
+        await AsyncStorage.setItem("status",`${value}`)
+    }
 
     async function setTheme(theme:string){
         setTHEME(theme)
@@ -53,12 +61,27 @@ function UserContextProvider({children}:any) {
         }
     }
 
+    async function getStatus(){
+        const data = await AsyncStorage.getItem("status")
+        if (data==null) {
+            return
+        }
+        else {
+            if (data==`true`) {
+                setStatusbar(true)
+            } else {
+                setStatusBar(false)
+            }
+        }
+    }
+
     useEffect(()=>{
         getTheme()
+        getStatus()
     },[])
 
      return (
-        <userContext.Provider value={{theme,setTheme,name,setName,siv,setSiv,isLoggedIn,setAuthState,pdf,setPdf}}>
+        <userContext.Provider value={{theme,statusBar,setStatusBar,setTheme,name,setName,siv,setSiv,isLoggedIn,setAuthState,pdf,setPdf}}>
             {children}
         </userContext.Provider>
     )

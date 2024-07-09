@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   loginButton: {
     height: 52,
     width:300,
-    backgroundColor: '#ddd',
+    backgroundColor: '#222',
     elevation:2,
     borderWidth:0.4,
     borderColor:"#00f",
@@ -323,6 +323,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  button1: {
+    width: "100%",
+    height: 120,
+    borderBottomStyle: "solid",
+    borderBottomWidth: 2,
+    borderBottomColor: "#ddd",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   theme: {
     width: "90%",
     height: 70,
@@ -335,6 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     marginTop:-50,
     fontSize: 25,
+    fontWeight:"800"
 
   },
   loginRegisterLines:{
@@ -413,7 +424,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     textAlign: 'center',
     marginTop: 8,
-    color: 'black',
+    color: '#ddd',
     fontSize:17,
     fontWeight:"500"
   },

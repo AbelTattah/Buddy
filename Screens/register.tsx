@@ -108,6 +108,7 @@ export default function Register({navigation}) {
           marginTop:20,
           fontSize:33,
           marginRight:130,
+          fontWeight:"800",
           color:"black"
         }}>
         Sign Up for
@@ -115,42 +116,47 @@ export default function Register({navigation}) {
       <Text style={{
         marginBottom:30,
         marginRight:100,
-        fontSize:20
+        fontSize:20,
+        color:"black"
       }}>
         Free and Instant books
       </Text>
       <KeyboardAvoidingView style={styles.ReggIn} behavior="padding">
         {/* Sign up inputs */}
         <TextInput
-          style={styles.ReggTextIn}
+          style={[styles.ReggTextIn,{color:"black"}]}
           ref={input => {
             this.textInput1 = input;
           }}
           placeholder="    name"
+          placeholderTextColor="black"
           onChangeText={text => setNameid(text)}
         />
         <TextInput
-          style={styles.ReggTextIn}
+          style={[styles.ReggTextIn,{color:"black"}]}
           ref={input => {
             this.textInput1 = input;
           }}
           inputMode="email"
           placeholder="    email"
           autoCapitalize="none"
+          placeholderTextColor="black"
           onChangeText={text => setEmail(text)}
         />
         <TextInput
           secureTextEntry
-          style={styles.ReggTextIn}
+          style={[styles.ReggTextIn,{color:"black"}]}
           placeholder="    password"
           autoCapitalize="none"
+          placeholderTextColor="black"
           onChangeText={text => setPass(text)}
         />
         <TextInput
           secureTextEntry
-          style={styles.ReggTextIn}
+          style={[styles.ReggTextIn,{color:"black"}]}
           placeholder="    confirm password"
           autoCapitalize="none"
+          placeholderTextColor="black"
           onChangeText={text => setPass1(text)}
         />
       </KeyboardAvoidingView>
@@ -165,27 +171,27 @@ export default function Register({navigation}) {
         <View>
           {regg === 'inp' ? (
             <>
-              <Text>
+              <Text style={{color:"black"}}>
                 Signing you up... <ActivityIndicator color="#2407f2" />
               </Text>
             </>
           ) : regg === 'prob' ? (
             <>
-              <Text>You have an account</Text>
+              <Text style={{color:"black"}}>You have an account</Text>
             </>
           ) : regg === 'prob1' ? (
             <>
-              <Text>A Network error occured</Text>
+              <Text style={{color:"black"}}>A Network error occured</Text>
             </>
           ) : regg === 'prob2' ? (
-            <Text>The form is not complete</Text>
+            <Text style={{color:"black"}}>The form is not complete</Text>
           ) : regg === 'succ' ? (
             <>
-              <Text>Sign Up Succesful ,Go to login Page!</Text>
+              <Text style={{color:"black"}}>Sign Up Succesful ,Go to login Page!</Text>
             </>
           ) : (
             <>
-              <Text>Buddy v.1.0</Text>
+              <Text style={{color:"black"}}>Buddy v.1.0</Text>
             </>
           )}
         </View>

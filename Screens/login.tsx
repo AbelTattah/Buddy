@@ -29,6 +29,7 @@ export default function Login({navigation}) {
   // Sign in function
   async function signIn() {
     if (emaill !== '' && pass !== '') {
+      setRegg('inp');
       await fetch(
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' +
           process.env.FIREBASE_KEY,
@@ -50,8 +51,10 @@ export default function Login({navigation}) {
             SaveInStorage(data);
             context.setAuthState(true);
             context.setName(suds['SNAME']);
+            setRegg('succ');
             navigation.navigate('App1');
           } else {
+            setRegg('Hm');
             Alert.alert('Error', `${data.error.message}`, [
               {
                 text: 'Ok',
@@ -60,6 +63,7 @@ export default function Login({navigation}) {
           }
         })
         .catch(error => {
+          setRegg('Hm');
           Alert.alert('Error', error.message, [
             {
               text: 'Ok',
@@ -136,24 +140,27 @@ export default function Login({navigation}) {
           marginTop:70,
           fontSize:33,
           marginRight:160,
-          color:"black"
+          color:"black",
+          fontWeight:"700"
         }}>
         Login and 
       </Text>
       <Text style={{
         marginBottom:60,
         marginRight:100,
-        fontSize:24
+        fontSize:24,
+        color:"black"
       }}>
         Let's Start Reading!
       </Text>
       <KeyboardAvoidingView style={styles.loginIn} behavior="padding">
         {/* Login inputs */}
         <TextInput
-          style={styles.loginTextIn}
+          style={[styles.loginTextIn,{color:"black"}]}
           inputMode="email"
           placeholder="   Email"
           autoCapitalize="none"
+          placeholderTextColor="black"
           onChangeText={text => setEmaill(text)}
         />
         <TextInput
@@ -161,9 +168,10 @@ export default function Login({navigation}) {
           ref={input => {
             this.textInput1 = input;
           }}
-          style={styles.loginTextIn}
+          style={[styles.loginTextIn,{color:"black"}]}
           placeholder="   Password"
           autoCapitalize="none"
+          placeholderTextColor="black"
           onChangeText={text => setPass(text)}
         />
       </KeyboardAvoidingView>
@@ -174,36 +182,36 @@ export default function Login({navigation}) {
       <Text style={styles.loginTextt2}>Privacy</Text> */}
       <View style={styles.regButtonView}>
         <View style={styles.loginRegisterLines}></View>
-        <Text>New to Buddy?</Text>
+        <Text style={{color:"black"}} >New to Buddy?</Text>
         <View style={styles.loginRegisterLines}></View>
       </View>
       <TouchableOpacity
           style={styles.loginReg}
           onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.loginRegText}> Sign Up</Text>
+          <Text style={[styles.loginRegText,{color:"black"}]}> Sign Up</Text>
         </TouchableOpacity>
       <>
         {regg === 'inp' ? (
           <>
-            <Text>
+            <Text style={{color:"black"}}>
               Logging in ... <ActivityIndicator color="#2407f2" />
             </Text>
           </>
         ) : regg === 'prob' ? (
           <>
-            <Text>Wrong email or password!</Text>
+            <Text style={{color:"black"}}>Wrong email or password!</Text>
           </>
         ) : regg === 'succ' ? (
           <>
-            <Text>Log In Succesful</Text>
+            <Text style={{color:"black"}}>Log In Succesful</Text>
           </>
         ) : regg === 'no' ? (
           <>
-            <Text>You do not have an accout. Go to the registration page</Text>
+            <Text style={{color:"black"}}>You do not have an accout. Go to the registration page</Text>
           </>
         ) : (
           <>
-            <Text>Buddy v.1.0</Text>
+            <Text style={{color:"black"}}>Buddy v.1.0</Text>
           </>
         )}
       </>
