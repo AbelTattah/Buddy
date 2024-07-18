@@ -26,7 +26,7 @@ import BookCard from '../Components/bookCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {FlatList} from 'react-native-gesture-handler';
 import {addToHistory} from './history';
-import { set } from 'firebase/database';
+import {set} from 'firebase/database';
 
 const Stack = createStackNavigator();
 var images: any[] = [];
@@ -41,18 +41,20 @@ const Main = ({navigation}) => {
   const [loadingFeatured, setLoadingFeatured] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<string>('');
   const [code, setCode] = useState('');
-  const [updating,setUpdating] = useState(false);
-
+  const [updating, setUpdating] = useState(false);
+  const [errorExplore, setErrorExplore] = useState(false);
+  const [errorFeatured, setErrorFeatured] = useState(false);
 
   //Responsiveness
   const {width, height} = useWindowDimensions();
 
   //Pdf regex http://207.211.176.165/buddy
   const test = /pdf/;
+  var count = 0;
 
   const [loading, setLoading] = useState(true);
   const [genre, setGenre] = useState([
-    'Art',
+    'AI',
     'Science',
     'Mathematics',
     'Literature',
@@ -86,6 +88,7 @@ const Main = ({navigation}) => {
 
   const changeGenre = async (bookCode: string, isfeatured: boolean) => {
     if (isfeatured) {
+      setErrorFeatured(false);
       setLoadingFeatured(true);
       setFeatured([]);
       featuredImages = [];
@@ -97,16 +100,7 @@ const Main = ({navigation}) => {
             keywords: bookCode,
           },
         );
-        if (response.data['titles'][0] == 'Not found') {
-          setFeatured([
-            {
-              endpoint: 'An error occured',
-              title: 'An error occured',
-              image: 'none',
-            },
-          ]);
-          return;
-        }
+
         // Filter pdf endpoints
         for (var v = 0; v < response.data.links.length; v++) {
           if (test.test(response.data.links[v])) {
@@ -120,20 +114,14 @@ const Main = ({navigation}) => {
             ]);
           }
         }
+        count = 0;
         setTimeout(() => setLoadingFeatured(false), 4000);
       } catch (error) {
-        setFeatured([
-          {
-            endpoint: 'An error occured',
-            title: 'An error occured',
-            image: 'none',
-          },
-        ]);
         console.log(error);
+        setErrorFeatured(true);
         setLoadingFeatured(false);
         setTimeout(() => {
-          if (featured[featured.length - 1]['title'] == 'An error occured') {
-            setFeatured(book => [...book.splice(featured.length - 1, 1)]);
+          if (errorFeatured && count < 2) {
             changeGenre(bookCode, isfeatured);
           }
         }, 2000);
@@ -141,6 +129,7 @@ const Main = ({navigation}) => {
       return;
     }
 
+    setErrorExplore(false);
     setLoading(true);
     setLoadingExplore(true);
     setBook([]);
@@ -153,17 +142,7 @@ const Main = ({navigation}) => {
           keywords: bookCode,
         },
       );
-      if (response.data['titles'][0] == 'Not found') {
-        setBook([
-          {
-            endpoint: 'An error occured',
-            title: 'An error occured',
-            image: 'none',
-            loading: false,
-          },
-        ]);
-        return;
-      }
+
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
@@ -178,24 +157,17 @@ const Main = ({navigation}) => {
           ]);
         }
       }
-
+      count = 0;
       setLoading(false);
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
       setLoading(false);
-      setBook([
-        {
-          endpoint: 'An error occured',
-          title: 'An error occured',
-          image: 'none',
-          loading: false,
-        },
-      ]);
       console.log(error);
+      setErrorExplore(true);
       setLoadingExplore(false);
       setTimeout(() => {
-        if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book => [...book.splice(book.length - 1, 1)]);
+        count++;
+        if (errorExplore && count < 2) {
           changeGenre(bookCode, isfeatured);
         }
       }, 2000);
@@ -203,13 +175,11 @@ const Main = ({navigation}) => {
   };
 
   const initialLoad = async (bookCode: string, isfeatured: boolean) => {
-    images=[];
-    featuredImages=[];
-
-    setBook([]);
-    setFeatured([]);
-
     if (isfeatured) {
+      setFeatured([]);
+      setLoading(true);
+      featuredImages = [];
+      setErrorFeatured(false);
       setLoadingFeatured(true);
       try {
         const response = await axios.post(
@@ -218,16 +188,7 @@ const Main = ({navigation}) => {
             keywords: bookCode,
           },
         );
-        if (response.data['titles'][0] == 'Not found') {
-          setFeatured([
-            {
-              endpoint: 'An error occured',
-              title: 'An error occured',
-              image: 'none',
-            },
-          ]);
-          return;
-        }
+
         // Filter pdf endpoints
         for (var v = 0; v < response.data.links.length; v++) {
           if (test.test(response.data.links[v])) {
@@ -241,19 +202,15 @@ const Main = ({navigation}) => {
             ]);
           }
         }
+        count = 0;
         setTimeout(() => setLoadingFeatured(false), 4000);
       } catch (error) {
-        setFeatured([
-          {
-            endpoint: 'An error occured',
-            title: 'An error occured',
-            image: 'none',
-          },
-        ]);
+        setErrorFeatured(true);
         console.log(error);
         setLoadingFeatured(false);
         setTimeout(() => {
-          if (featured[featured.length - 1]['title'] == 'An error occured') {
+          count++;
+          if (errorFeatured && count < 2) {
             changeGenre(bookCode, isfeatured);
           }
         }, 2000);
@@ -261,6 +218,9 @@ const Main = ({navigation}) => {
       return;
     }
 
+    setBook([]);
+    images = [];
+    setErrorExplore(false);
     setLoading(true);
     setLoadingExplore(true);
 
@@ -271,17 +231,7 @@ const Main = ({navigation}) => {
           keywords: bookCode,
         },
       );
-      if (response.data['titles'][0] == 'Not found') {
-        setBook([
-          {
-            endpoint: 'An error occured',
-            title: 'An error occured',
-            image: 'none',
-            loading: false,
-          },
-        ]);
-        return;
-      }
+
       // Filter pdf endpoints
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
@@ -297,22 +247,16 @@ const Main = ({navigation}) => {
         }
       }
       setLoading(false);
+      count = 0;
       setTimeout(() => setLoadingExplore(false), 4000);
     } catch (error) {
+      setErrorExplore(true);
       setLoading(false);
-      setBook([
-        {
-          endpoint: 'An error occured',
-          title: 'An error occured',
-          image: 'none',
-          loading: false,
-        },
-      ]);
       console.log(error);
       setLoadingExplore(false);
       setTimeout(() => {
-        if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book => [...book.splice(book.length - 1, 1)]);
+        count++;
+        if (errorExplore && count < 2) {
           initialLoad(bookCode, isfeatured);
         }
       }, 2000);
@@ -320,9 +264,7 @@ const Main = ({navigation}) => {
   };
 
   const update = async (bookCode: string, isfeatured: boolean) => {
-    if (book[book.length - 1]['title'] == 'An error occured') {
-      book.splice(book.length - 1, 1);
-    }
+    setErrorExplore(false);
     setUpdating(true);
     try {
       const response = await axios.post(
@@ -331,17 +273,6 @@ const Main = ({navigation}) => {
           keywords: bookCode,
         },
       );
-      if (response.data['titles'][0] == 'Not found') {
-        setBook([
-          {
-            endpoint: 'An error occured',
-            title: 'An error occured',
-            image: 'none',
-            loading: false,
-          },
-        ]);
-        return;
-      }
 
       for (var v = 0; v < response.data.links.length; v++) {
         if (test.test(response.data.links[v])) {
@@ -358,24 +289,17 @@ const Main = ({navigation}) => {
       }
 
       setLoading(false);
+      count = 0;
       setTimeout(() => setUpdating(false), 2000);
     } catch (error) {
+      setErrorExplore(true);
       setLoading(false);
-      setBook(book => [
-        ...book,
-        {
-          endpoint: 'An error occured',
-          title: 'An error occured',
-          image: 'none',
-          loading: false,
-        },
-      ]);
+
       console.log(error);
       setLoadingExplore(false);
       setTimeout(() => setUpdating(false), 2000);
       setTimeout(() => {
-        if (book[book.length - 1]['title'] == 'An error occured') {
-          setBook(book => [...book.splice(book.length - 1, 1)]);
+        if (errorExplore && count > 2) {
           update(bookCode, isfeatured);
         }
       }, 2000);
@@ -546,6 +470,19 @@ const Main = ({navigation}) => {
                     );
                   }}
                 />
+                {errorFeatured && <Text>An error occured...</Text>}
+                {errorFeatured && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      let random = Math.floor(Math.random() * 6);
+                      let random2 = Math.floor(Math.random() * 12);
+                      setName(name);
+                      initialLoad(genre[random], false);
+                      initialLoad(genre[random2], true);
+                    }}>
+                    <Text>Tap to reload</Text>
+                  </TouchableOpacity>
+                )}
               </>
             )}
             <Text
@@ -592,6 +529,18 @@ const Main = ({navigation}) => {
                 }}
               />
             )}
+            {errorExplore && <Text>An error occured...</Text>}
+            {errorExplore && (
+              <TouchableOpacity
+                onPress={() => {
+                  let random = Math.floor(Math.random() * 6);
+                  let random2 = Math.floor(Math.random() * 12);
+                  setName(name);
+                  initialLoad(genre[random2], false);
+                }}>
+                <Text>Tap to reload</Text>
+              </TouchableOpacity>
+            )}
             <>{updating && <ActivityIndicator color={'#666'} size={40} />}</>
           </>
         ) : (
@@ -612,22 +561,29 @@ const Home = ({navigation}) => {
           component={Main}
           options={{headerShown: false}}
         />
-        <Stack.Screen
-          name="Search"
-          component={DocumentNav}
+        <Stack.Screen 
+        name="Search" 
+        component={DocumentNav} 
+        options={({route}) => {
+          return {
+            headerStyle: {
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
+            },
+            headerTintColor: theme == 'light' ? '#000' : '#fff',
+          };
+        }}
         />
         <Stack.Screen
-            options={({route}) => {
-              const title = route.params.book;
-              return {
-                title: title,
-                headerStyle: {
-                  backgroundColor: theme=="light"?"#fff":"#000",
-                },
-                headerTintColor:theme=="light"?"#000":"#fff"
-              };
-              
-            }}
+          options={({route}) => {
+            const title = route.params.book;
+            return {
+              title: title,
+              headerStyle: {
+                backgroundColor: theme == 'light' ? '#fff' : '#000',
+              },
+              headerTintColor: theme == 'light' ? '#000' : '#fff',
+            };
+          }}
           name="View"
           component={DocumentRenderer}
         />

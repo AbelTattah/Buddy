@@ -133,6 +133,9 @@ const DocumentSearch = ({navigation}: any) => {
           ref={input => {
             this.textInput = input;
           }}
+          onSubmitEditing={()=>{
+            searchHandler()
+          }}
           style={{
             height: 40,
             width: 230,
@@ -145,7 +148,9 @@ const DocumentSearch = ({navigation}: any) => {
           placeholder="       Enter book name"
           onChangeText={text => {
             setCode(text);
-          }}></TextInput>
+          }}
+          >
+          </TextInput>
         <TouchableOpacity
           onPress={() => searchHandler()}
           style={styles.searchButton}>
@@ -182,7 +187,7 @@ const DocumentSearch = ({navigation}: any) => {
             ) : (
               <View style={{
                 flex:1,
-                backgroundColor:theme=="light"?"white":"#00f",
+                backgroundColor:theme=="light"?"white":"#000",
                 borderRadius: 20,
                 flexDirection: 'column',
                 gap: 20,

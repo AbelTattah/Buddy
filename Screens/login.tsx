@@ -15,8 +15,17 @@ import {doc, getDoc} from 'firebase/firestore'; // Importing the doc and getDoc 
 import {userContext} from '../store/user';
 import {useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import Colors from '../colors/colors';
+
+export async function SaveInStorage(data: any,name:"string") {
+  try {
+    await AsyncStorage.setItem(
+      'Data',
+      JSON.stringify({data: data, name: name}),
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 // Login component
 export default function Login({navigation}) {
@@ -24,6 +33,7 @@ export default function Login({navigation}) {
   const [pass, setPass] = useState(''); // Password state
   const [suds, setSuds] = useState({}); // User data state
   const [regg, setRegg] = useState('Hm'); // Registration state
+  const [checking,setChecking] = useState(true)
   const context = useContext(userContext);
 
   // Sign in function
@@ -48,7 +58,7 @@ export default function Login({navigation}) {
         .then(response => response.json())
         .then(data => {
           if (data.error == undefined) {
-            SaveInStorage(data);
+            SaveInStorage(data,suds['SNAME']);
             context.setAuthState(true);
             context.setName(suds['SNAME']);
             setRegg('succ');
@@ -79,16 +89,7 @@ export default function Login({navigation}) {
     }
   }
 
-  async function SaveInStorage(data: any) {
-    try {
-      await AsyncStorage.setItem(
-        'Data',
-        JSON.stringify({data: data, name: suds['SNAME']}),
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
 
   // function to read user data from firestore
   async function DataRead() {
@@ -127,9 +128,23 @@ export default function Login({navigation}) {
       } catch (error) {
         //Do nothing
       }
+      setTimeout(()=>{
+        setChecking(false)
+      },2000)
     }
     autoLogin();
   });
+
+  if (checking) {
+    return(<View style={{
+      flex:1,
+      justifyContent:'center',
+      alignItems:"center",
+      backgroundColor:"white"
+    }}>
+    <ActivityIndicator size={53} color="#999" />
+    </View>)
+  }
 
   // Render the page
   return (

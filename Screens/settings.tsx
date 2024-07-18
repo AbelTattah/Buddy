@@ -1,5 +1,5 @@
-import React from 'react'; // Importing components from react
-import {View, Text, TouchableOpacity, Switch} from 'react-native'; // Importing components from react-native
+import React,{useState} from 'react'; // Importing components from react
+import {View, Text, TouchableOpacity, Switch, ActivityIndicator, Alert} from 'react-native'; // Importing components from react-native
 import styles from '../Styling/styles'; // Importing the styles from the styles file
 import {userContext} from '../store/user';
 import {useContext} from 'react';
@@ -10,12 +10,14 @@ import Preferences from './settings/preferences';
 import About from './settings/about';
 import Feedback from './settings/feedback';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getHistory } from './history';
 
 const stack = createStackNavigator();
 
 // Settings page
 export function Main({navigation}: any) {
   const context = useContext(userContext);
+  const [clearing,setClearing] = useState(false);
   const {theme, setTheme} = useContext(userContext);
 
   async function activateDarkMode() {
@@ -111,7 +113,43 @@ export function Main({navigation}: any) {
           </Text>
           <Icon name="chevron-forward" size={22} color="#999" />
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => {
+            setClearing(true);
+            const data = await AsyncStorage.getItem('Data');
+            console.log(typeof(data))
+            const history = await AsyncStorage.getItem('history')
+            console.log(typeof(history))
+            await AsyncStorage.clear()
+            await AsyncStorage.setItem("Data",data);
+            await AsyncStorage.setItem("history",history);
+            setClearing(false);
+            Alert.alert("Cache cleared","Book Cache cleared successfully",[
+              {
+                text:"Ok"
+              }
+            ])
+          }}
+          style={styles.button}>
+          {(clearing)?(<><ActivityIndicator size={32}></ActivityIndicator><Text>Clearing Cache</Text></>):(<></>)}
+          <Text
+            style={[
+              styles.option,
+              {color: theme == 'light' ? 'black' : 'white'},
+            ]}>
+            Clear Book Cache
+          </Text>
+          <Icon name="remove-outline" size={22} color="#999" />
+        </TouchableOpacity>
       </View>
+      <Text
+        style={{
+          position: 'absolute',
+          bottom: 100,
+          color: theme == 'light' ? 'black' : 'white',
+        }}>
+        Clear Book Cache to fix loading errors
+      </Text>
       <Text
         style={{
           position: 'absolute',

@@ -23,11 +23,11 @@ export default function Preferences() {
   function hideStatusBar() {
       if (statusBar) {
         setStatusBar(false)
-        setSiv(true)
+        setSiv(false)
       }
       else {
         setStatusBar(true)
-        setSiv(false)
+        setSiv(true)
       }
   }
 

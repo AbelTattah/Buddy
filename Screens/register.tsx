@@ -11,9 +11,10 @@ import styles from '../Styling/styles'; // Importing the styles from the styles 
 import {useState, useRef} from 'react'; // Importing the useState and useEffect component from react
 import {setDoc, doc} from 'firebase/firestore'; // Importing the setDoc and doc from firebase/firestore
 import {db} from '../firebase'; // Importing the db from the firebase
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Colors from '../colors/colors';
+import {userContext} from '../store/user';
+import {useContext} from 'react';
+import { SaveInStorage } from './login';
+
 
 // Register component
 export default function Register({navigation}) {
@@ -26,6 +27,8 @@ export default function Register({navigation}) {
   const [sign, setSign] = useState(false); // Sign up state
 
   const ref = useRef('textInput');
+  const context = useContext(userContext);
+
 
   // function to create user collection in firestore
   async function createUserCollection() {
@@ -65,13 +68,16 @@ export default function Register({navigation}) {
           if (data.error == undefined) {
             createUserCollection();
             setTimeout(() => {
+              SaveInStorage(data,nameid)
               setRegg('succ');
+              context.setAuthState(true);
+              context.setName(nameid);
               this.textInput1.clear();
             }, 3000);
             //Navigate to login page
             setTimeout(() => {
               setEmail('');
-              navigation.navigate('Login');
+              navigation.navigate('App1');
             }, 4500);
           } else {
             Alert.alert('Error Signing Up', data.error.message, [
@@ -187,7 +193,7 @@ export default function Register({navigation}) {
             <Text style={{color:"black"}}>The form is not complete</Text>
           ) : regg === 'succ' ? (
             <>
-              <Text style={{color:"black"}}>Sign Up Succesful ,Go to login Page!</Text>
+              <Text style={{color:"black"}}>Sign Up Succesful!</Text>
             </>
           ) : (
             <>

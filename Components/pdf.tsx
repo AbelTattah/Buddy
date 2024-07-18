@@ -19,9 +19,12 @@ RNPdftron.enableJavaScript(true);
 export default function PdfComp({url}) {
   //Page number
   const [change, setChange] = useState(false);
+  var cacheExpiration = 0;
+  const [loading, setLoading] = useState(false);
+  const [percentage, setPercentage] = useState(0);
 
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageNumberValue, setValue] = useState(0)
+  const [pageNumberValue, setValue] = useState(0);
 
   // Source of the pdf
   const source = {uri: url, cache: true};
@@ -39,19 +42,19 @@ export default function PdfComp({url}) {
             {backgroundColor: theme == 'dark' ? '#000' : '#fff'},
           ]}>
           <TextInput
-          keyboardType='numeric'
-          placeholder='Enter page '
-          onChangeText={(e)=>setValue(parseInt(e))}
-          placeholderTextColor={theme == 'dark' ? '#fff' : '#000'}
+            keyboardType="numeric"
+            placeholder="Enter page number "
+            onChangeText={e => setValue(parseInt(e))}
+            placeholderTextColor={theme == 'dark' ? '#fff' : '#000'}
             style={[
               stylee.search,
-              {color: theme == 'dark' ? '#fff' : '#000'},
+              {width: 150, color: theme == 'dark' ? '#fff' : '#000'},
             ]}></TextInput>
           <TouchableOpacity
-          onPress={()=>setPageNumber(pageNumberValue)}
+            onPress={() => setPageNumber(pageNumberValue)}
             style={[
               styles.loginButton,
-              {width: 100, justifyContent: 'center', alignItems: 'center'},
+              {width: 70, justifyContent: 'center', alignItems: 'center'},
             ]}>
             <Text style={{color: 'white'}}>Go</Text>
           </TouchableOpacity>
@@ -59,11 +62,37 @@ export default function PdfComp({url}) {
       ) : (
         <></>
       )}
+      {loading ? (
+        <>
+          <View
+            style={[
+              stylee.progressBar,
+              {
+                backgroundColor: theme == 'light' ? '#fff' : '#000',
+                borderColor: theme == 'light' ? '#000' : '#fff',
+              },
+            ]}>
+            <View
+              style={{
+                width: `${percentage}%`,
+                position: 'relative',
+                height: '100%',
+                backgroundColor: theme == 'light' ? '#000' : '#fff',
+              }}></View>
+          </View>
+        </>
+      ) : (
+        <></>
+      )}
       <Pdf
         trustAllCerts={false}
         source={source}
+        onLoadProgress={percent => {
+          setLoading(true);
+          setPercentage(percent * 100);
+        }}
         onLoadComplete={(numberOfPages, filePath) => {
-          console.log(`Number of pages: ${numberOfPages}`);
+          setLoading(false);
         }}
         onPageChanged={(page, numberOfPages) => {
           console.log(`Current page: ${page}`);
@@ -71,6 +100,7 @@ export default function PdfComp({url}) {
         onError={error => {
           console.log(error);
           Alert.alert('Error loading pdf', `${error}`, [{text: 'Ok'}]);
+          cacheExpiration = 3;
         }}
         page={pageNumber}
         onPageSingleTap={() => {
@@ -125,5 +155,12 @@ const stylee = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 10,
     marginTop: 10,
+  },
+  progressBar: {
+    width: '90%',
+    height: 30,
+    top: 200,
+    borderWidth: 0.7,
+    margin: 20,
   },
 });

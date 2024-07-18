@@ -9,8 +9,16 @@ Here are some screenshots of the app in development.
 
 ### Homepage
 
-![BuddyHomepage](/assets/screenshots/Homepage.png)
+![BuddyHomepage](/assets/screenshots/Home.png)
 
 ### Book Search
 
-![BuddyBookSearc](/assets/screenshots/Search%20Page.png)
+![BuddyBookSearch](/assets/screenshots/Search.png)
+
+### Book
+
+![BuddyBook](/assets/screenshots/Book.png)
+
+### Recents
+
+![BuddyRecents](/assets/screenshots/Recent.png)

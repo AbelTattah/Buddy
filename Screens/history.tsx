@@ -141,7 +141,9 @@ const HistMain = ({navigation}) => {
         <FlatList
           style={{
             marginTop: 20,
-            width:"86%"
+            width:"86%",
+            height:"80%",
+            marginBottom:50,
           }}
           showsVerticalScrollIndicator={false}
           data={Object.keys(history).reverse()}
