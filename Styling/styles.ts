@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     elevation:2,
     borderWidth:0.4,
     borderColor:"#00f",
-    borderRadius: 10,
+    borderRadius: 15,
     justifyContent: 'center',
     margin: 10,
     marginRight: 10,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     backgroundColor:"#ccc"
   },
   loginTextIn: {
-    borderRadius: 2,
+    borderRadius: 15,
     borderWidth: 1,
     backgroundColor:"#fff",
     width: 300,
@@ -371,6 +371,7 @@ const styles = StyleSheet.create({
   },
   loginReg: {
     backgroundColor: 'white',
+    fontWeight:"bold",
     marginTop:30,
     marginBottom:30
   },
@@ -412,7 +413,7 @@ const styles = StyleSheet.create({
     borderRadius: 30
   },
   ReggTextIn: {
-    borderRadius: 2,
+    borderRadius: 15,
     borderWidth: 1,
     backgroundColor:"#fff",
     width: 300,
@@ -442,7 +443,8 @@ const styles = StyleSheet.create({
   },
 
   loginRegText: {
-    color: '#000'
+    color: '#000',
+    fontWeight:"900"
   },
 
   regCheck: {

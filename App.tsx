@@ -62,7 +62,6 @@ function App1({navigation}: any) {
     else {
       setSiv(false)
     }
-
   }
 
   React.useEffect(()=>{
@@ -228,15 +227,7 @@ export default function App() {
             name="Login"
             component={Login}
             options={{
-              header:()=><Text style={{
-                fontFamily:'GillSans-Italic',
-                fontSize:20,
-                backgroundColor:'#fff',
-                paddingLeft:20,
-                paddingTop:20,
-                color:'#555'
-              }}>Buddy</Text>,
-              headerShadowVisible: false
+              headerShown:false
             }}
           />
           <Stack.Screen

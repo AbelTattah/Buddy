@@ -113,43 +113,7 @@ export function Main({navigation}: any) {
           </Text>
           <Icon name="chevron-forward" size={22} color="#999" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={async () => {
-            setClearing(true);
-            const data = await AsyncStorage.getItem('Data');
-            console.log(typeof(data))
-            const history = await AsyncStorage.getItem('history')
-            console.log(typeof(history))
-            await AsyncStorage.clear()
-            await AsyncStorage.setItem("Data",data);
-            await AsyncStorage.setItem("history",history);
-            setClearing(false);
-            Alert.alert("Cache cleared","Book Cache cleared successfully",[
-              {
-                text:"Ok"
-              }
-            ])
-          }}
-          style={styles.button}>
-          {(clearing)?(<><ActivityIndicator size={32}></ActivityIndicator><Text>Clearing Cache</Text></>):(<></>)}
-          <Text
-            style={[
-              styles.option,
-              {color: theme == 'light' ? 'black' : 'white'},
-            ]}>
-            Clear Book Cache
-          </Text>
-          <Icon name="remove-outline" size={22} color="#999" />
-        </TouchableOpacity>
       </View>
-      <Text
-        style={{
-          position: 'absolute',
-          bottom: 100,
-          color: theme == 'light' ? 'black' : 'white',
-        }}>
-        Clear Book Cache to fix loading errors
-      </Text>
       <Text
         style={{
           position: 'absolute',

@@ -40,7 +40,7 @@ const Main = ({navigation}) => {
   const [loadingExplore, setLoadingExplore] = useState(false);
   const [loadingFeatured, setLoadingFeatured] = useState(false);
   const [currentPdf, setCurrentPdf] = useState<string>('');
-  const [code, setCode] = useState('');
+  const [limit, setLimit] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [errorExplore, setErrorExplore] = useState(false);
   const [errorFeatured, setErrorFeatured] = useState(false);
@@ -95,7 +95,7 @@ const Main = ({navigation}) => {
 
       try {
         const response = await axios.post(
-          'https://buddy-zpdh.onrender.com/geturl',
+          'https://com.buddyyy.duckdns.org/geturl',
           {
             keywords: bookCode,
           },
@@ -137,7 +137,7 @@ const Main = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'https://buddy-zpdh.onrender.com/geturl',
+        'https://com.buddyyy.duckdns.org/geturl',
         {
           keywords: bookCode,
         },
@@ -183,7 +183,7 @@ const Main = ({navigation}) => {
       setLoadingFeatured(true);
       try {
         const response = await axios.post(
-          'https://buddy-zpdh.onrender.com/geturl',
+          'https://com.buddyyy.duckdns.org/geturl',
           {
             keywords: bookCode,
           },
@@ -226,7 +226,7 @@ const Main = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'https://buddy-zpdh.onrender.com/geturl',
+        'https://com.buddyyy.duckdns.org/geturl',
         {
           keywords: bookCode,
         },
@@ -268,7 +268,7 @@ const Main = ({navigation}) => {
     setUpdating(true);
     try {
       const response = await axios.post(
-        'https://buddy-zpdh.onrender.com/geturl',
+        'https://com.buddyyy.duckdns.org/geturl',
         {
           keywords: bookCode,
         },
@@ -348,7 +348,12 @@ const Main = ({navigation}) => {
           ) {
             let random = Math.floor(Math.random() * 12);
             console.log('Random number:', random);
-            update(genre[random], false);
+            if (book.length>40) {
+              setLimit(true)
+            }
+            if (limit===false) {
+              update(genre[random], false);
+            } 
           }
         }}
         showsVerticalScrollIndicator={false}
@@ -368,6 +373,7 @@ const Main = ({navigation}) => {
             onPress={() => {
               let random = Math.floor(Math.random() * 6);
               let random2 = Math.floor(Math.random() * 12);
+              setLimit(false)
               setName(name);
               initialLoad(genre[random], false);
               initialLoad(genre[random2], true);
@@ -408,6 +414,7 @@ const Main = ({navigation}) => {
                     <GenreCard
                       Icon={genreIcon[i]}
                       search={() => {
+                        setLimit(false);
                         changeGenre(item, false);
                         changeGenre(item, true);
                       }}
@@ -541,10 +548,23 @@ const Main = ({navigation}) => {
                 <Text>Tap to reload</Text>
               </TouchableOpacity>
             )}
-            <>{updating && <ActivityIndicator color={'#666'} size={40} />}</>
+            <>{updating && <ActivityIndicator style={{marginBottom:20}} color={'#666'} size={40} />}</>
+            <>{limit?(<Text style ={{marginBottom:20}}> You're all caught up for today. Click the refresh button to seen more</Text>):(<></>)}</>
           </>
         ) : (
+          <View
+          style={{
+            flex:1,
+            height:'100%',
+            flexDirection:'column',
+            justifyContent:'center',
+            alignItems:'center',
+            margin:100
+          }}
+          >
           <ActivityIndicator color={'#666'} size={40} />
+          <Text>Loading Books...</Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>

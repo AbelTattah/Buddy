@@ -55,7 +55,7 @@ const DocumentSearch = ({navigation}: any) => {
   async function getEndpoints(bookCode: string) {
     try {
       const response = await axios.post(
-        'https://buddy-zpdh.onrender.com/geturl',
+        'https://com.buddyyy.duckdns.org/geturl',
         {
           keywords: bookCode,
         },
@@ -183,6 +183,7 @@ const DocumentSearch = ({navigation}: any) => {
                   alignItems: 'center',
                 }}>
                 <ActivityIndicator size="large" />
+                <Text>Searching for book...</Text>
               </View>
             ) : (
               <View style={{

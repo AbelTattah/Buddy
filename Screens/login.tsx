@@ -4,7 +4,7 @@ import {
   KeyboardAvoidingView,
   TextInput,
   ActivityIndicator,
-  ImageBackground,
+  Image,
   TouchableOpacity,
   Alert,
 } from 'react-native'; // Importing components from react-native
@@ -149,25 +149,41 @@ export default function Login({navigation}) {
   // Render the page
   return (
     <View style={styles.loginMain}>
+      <View style={{
+        width:"75%",
+        justifyContent:'flex-start',
+        flexDirection:'row'
+      }}>
+      <Image style={{ marginTop:90,height:50,width:50}} source={require('../assets/logo.png')} />
+      </View>
+      <View style={{
+        width:"72%",
+        justifyContent:'flex-start',
+        flexDirection:'row'
+      }}>
       <Text
         style={{
           borderRadius: 10,
-          marginTop:70,
+          marginTop:60,
           fontSize:33,
-          marginRight:160,
           color:"black",
           fontWeight:"700"
         }}>
         Login and 
       </Text>
+      </View>
+      <View style={{
+        width:"72%",
+        justifyContent:'flex-start',
+        flexDirection:'row'
+      }}>
       <Text style={{
-        marginBottom:60,
-        marginRight:100,
-        fontSize:24,
+        fontSize:20,
         color:"black"
       }}>
         Let's Start Reading!
       </Text>
+      </View>
       <KeyboardAvoidingView style={styles.loginIn} behavior="padding">
         {/* Login inputs */}
         <TextInput
@@ -226,7 +242,7 @@ export default function Login({navigation}) {
           </>
         ) : (
           <>
-            <Text style={{color:"black"}}>Buddy v.1.0</Text>
+            <Text style={{color:"black",position:"absolute",bottom:10}}>Buddy v.1.0</Text>
           </>
         )}
       </>

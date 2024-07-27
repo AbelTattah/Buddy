@@ -46,7 +46,7 @@ export default function Register({navigation}) {
   //  process.env.FIREBASE_KEY
   // function to sign up user
   async function signUp() {
-    if (pass1 == pass && email !== '') {
+    if ( pass!=='' && email !== '') {
       setRegg('inp');
       await fetch(
         'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
@@ -108,6 +108,11 @@ export default function Register({navigation}) {
 
   return (
     <View style={styles.ReggMain}>
+      <View style={{
+        width:"75%",
+        justifyContent:'flex-start',
+        flexDirection:'row'
+      }}>
       <Text
         style={{
           borderRadius: 10,
@@ -119,6 +124,12 @@ export default function Register({navigation}) {
         }}>
         Sign Up for
       </Text>
+      </View>
+      <View style={{
+        width:"75%",
+        justifyContent:'flex-start',
+        flexDirection:'row'
+      }}>
       <Text style={{
         marginBottom:30,
         marginRight:100,
@@ -127,6 +138,7 @@ export default function Register({navigation}) {
       }}>
         Free and Instant books
       </Text>
+      </View>
       <KeyboardAvoidingView style={styles.ReggIn} behavior="padding">
         {/* Sign up inputs */}
         <TextInput
@@ -156,14 +168,6 @@ export default function Register({navigation}) {
           autoCapitalize="none"
           placeholderTextColor="black"
           onChangeText={text => setPass(text)}
-        />
-        <TextInput
-          secureTextEntry
-          style={[styles.ReggTextIn,{color:"black"}]}
-          placeholder="    confirm password"
-          autoCapitalize="none"
-          placeholderTextColor="black"
-          onChangeText={text => setPass1(text)}
         />
       </KeyboardAvoidingView>
       <KeyboardAvoidingView
