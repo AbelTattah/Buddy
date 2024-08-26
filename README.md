@@ -4,16 +4,16 @@ Buddy is here to help. Buddy is an android app. Buddy gives you instant access t
 
 ### Homepage
 
-![BuddyHomepage](/assets/screenshots/Home.png)
+<img src="/assets/screenshots/Home.png" alt="BuddyHomepage" width="400">
 
 ### Book Search
 
-![BuddyBookSearch](/assets/screenshots/Search.png)
+<img src="/assets/screenshots/Search.png" alt="BuddyBookSearch" width="400">
 
 ### Book
 
-![BuddyBook](/assets/screenshots/Book.png)
+<img src="/assets/screenshots/Book.png" alt="BuddyBook" width="400">
 
 ### Recents
 
-![BuddyRecents](/assets/screenshots/Recent.png)
+<img src="/assets/screenshots/Recent.png" alt="BuddyRecents" width="400">
