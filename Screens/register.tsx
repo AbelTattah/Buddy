@@ -6,29 +6,31 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  Image,
+  StyleSheet,
 } from 'react-native';
-import styles from '../Styling/styles'; // Importing the styles from the styles file
 import {useState, useRef} from 'react'; // Importing the useState and useEffect component from react
 import {setDoc, doc} from 'firebase/firestore'; // Importing the setDoc and doc from firebase/firestore
 import {db} from '../firebase'; // Importing the db from the firebase
 import {userContext} from '../store/user';
 import {useContext} from 'react';
-import { SaveInStorage } from './login';
-
+import {SaveInStorage} from './login';
+import PrimaryButton from '../Components/button';
+import PrimaryTextInput from '../Components/textinput';
+import {NavigationProp} from '@react-navigation/native';
+import Colors from '../Components/constants/Colors';
 
 // Register component
-export default function Register({navigation}) {
-  const [sid, setSid] = useState(0); // Student ID state
-  const [nameid, setNameid] = useState(''); // Name state
-  const [pass, setPass] = useState(''); // Password state
-  const [pass1, setPass1] = useState(''); // Confirm password state
-  const [email, setEmail] = useState(''); // Email state
-  const [regg, setRegg] = useState('rnd'); // Registration state
-  const [sign, setSign] = useState(false); // Sign up state
+export default function Register({navigation}: any) {
+  const [nameid, setNameid] = useState<string>(''); // Name state
+  const [pass, setPass] = useState<string>(''); // Password state
+  const [email, setEmail] = useState<string>(''); // Email state
+  const [regg, setRegg] = useState<
+    '' | 'succ' | 'inp' | 'prob' | 'rnd' | 'prob1' | 'prob2'
+  >('rnd'); // Registration state
 
   const ref = useRef('textInput');
   const context = useContext(userContext);
-
 
   // function to create user collection in firestore
   async function createUserCollection() {
@@ -46,7 +48,7 @@ export default function Register({navigation}) {
   //  process.env.FIREBASE_KEY
   // function to sign up user
   async function signUp() {
-    if ( pass!=='' && email !== '') {
+    if (pass !== '' && email !== '') {
       setRegg('inp');
       await fetch(
         'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
@@ -68,7 +70,7 @@ export default function Register({navigation}) {
           if (data.error == undefined) {
             createUserCollection();
             setTimeout(() => {
-              SaveInStorage(data,nameid)
+              SaveInStorage(data, nameid);
               setRegg('succ');
               context.setAuthState(true);
               context.setName(nameid);
@@ -107,105 +109,129 @@ export default function Register({navigation}) {
   }
 
   return (
-    <View style={styles.ReggMain}>
-      <View style={{
-        width:"75%",
-        justifyContent:'flex-start',
-        flexDirection:'row'
-      }}>
-      <Text
-        style={{
-          borderRadius: 10,
-          marginTop:20,
-          fontSize:33,
-          marginRight:130,
-          fontWeight:"800",
-          color:"black"
-        }}>
-        Sign Up for
-      </Text>
+    <View style={styles.container}>
+      {regg === 'inp' ? (
+        <>
+          <Text style={{color: 'black'}}>
+            Signing you up... <ActivityIndicator color="#2407f2" />
+          </Text>
+        </>
+      ) : regg === 'prob' ? (
+        <>
+          <Text style={{color: 'black'}}>You have an account</Text>
+        </>
+      ) : regg === 'prob1' ? (
+        <>
+          <Text style={{color: 'black'}}>A Network error occured</Text>
+        </>
+      ) : regg === 'prob2' ? (
+        <Text style={{color: 'black'}}>The form is not complete</Text>
+      ) : regg === 'succ' ? (
+        <>
+          <Text style={{color: 'black'}}>Sign Up Succesful!</Text>
+        </>
+      ) : (
+        <>
+          <Text style={{color: 'black'}}></Text>
+        </>
+      )}
+
+      <View style={styles.top}>
+        <Text style={styles.bannerPrimary}>Sign Up for</Text>
       </View>
-      <View style={{
-        width:"75%",
-        justifyContent:'flex-start',
-        flexDirection:'row'
-      }}>
-      <Text style={{
-        marginBottom:30,
-        marginRight:100,
-        fontSize:20,
-        color:"black"
-      }}>
-        Free and Instant books
-      </Text>
+      <View style={styles.top}>
+        <Text style={styles.bannerSecondary}>Free and Instant books</Text>
       </View>
-      <KeyboardAvoidingView style={styles.ReggIn} behavior="padding">
+
+      <KeyboardAvoidingView style={styles.main} behavior="padding">
         {/* Sign up inputs */}
-        <TextInput
-          style={[styles.ReggTextIn,{color:"black"}]}
-          ref={input => {
-            this.textInput1 = input;
+        <PrimaryTextInput
+          secure={false}
+          email={false}
+          inputMode="text"
+          placeholder=" Full Legal Name"
+          setter={async e => setNameid(e)}
+          onSubmitEditing={() => {
+            signUp();
           }}
-          placeholder="    name"
-          placeholderTextColor="black"
-          onChangeText={text => setNameid(text)}
         />
-        <TextInput
-          style={[styles.ReggTextIn,{color:"black"}]}
-          ref={input => {
-            this.textInput1 = input;
+        <PrimaryTextInput
+          placeholder=" Email"
+          secure={false}
+          email={false}
+          inputMode="text"
+          setter={async e => setEmail(e)}
+          onSubmitEditing={() => {
+            signUp();
           }}
-          inputMode="email"
-          placeholder="    email"
-          autoCapitalize="none"
-          placeholderTextColor="black"
-          onChangeText={text => setEmail(text)}
         />
-        <TextInput
-          secureTextEntry
-          style={[styles.ReggTextIn,{color:"black"}]}
-          placeholder="    password"
-          autoCapitalize="none"
-          placeholderTextColor="black"
-          onChangeText={text => setPass(text)}
+        <PrimaryTextInput
+          secure={false}
+          email={false}
+          inputMode="text"
+          placeholder=" Password"
+          setter={async e => setPass(e)}
+          onSubmitEditing={() => {
+            signUp();
+          }}
+        />
+        <PrimaryButton
+          radius={10}
+          size="big"
+          pressHandler={() => signUp()}
+          title="Sign Up"
         />
       </KeyboardAvoidingView>
-      <KeyboardAvoidingView
-        style={styles.regCheckmain}
-        keyboardShouldPersistTaps="always">
-        <View style={styles.ReggButtonView}>
-          <TouchableOpacity style={styles.loginButton} onPress={() => signUp()}>
-            <Text style={styles.loginButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          {regg === 'inp' ? (
-            <>
-              <Text style={{color:"black"}}>
-                Signing you up... <ActivityIndicator color="#2407f2" />
-              </Text>
-            </>
-          ) : regg === 'prob' ? (
-            <>
-              <Text style={{color:"black"}}>You have an account</Text>
-            </>
-          ) : regg === 'prob1' ? (
-            <>
-              <Text style={{color:"black"}}>A Network error occured</Text>
-            </>
-          ) : regg === 'prob2' ? (
-            <Text style={{color:"black"}}>The form is not complete</Text>
-          ) : regg === 'succ' ? (
-            <>
-              <Text style={{color:"black"}}>Sign Up Succesful!</Text>
-            </>
-          ) : (
-            <>
-              <Text style={{color:"black"}}>Buddy v.1.0</Text>
-            </>
-          )}
-        </View>
-      </KeyboardAvoidingView>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={[styles.signup ,{
+          color: Colors.primary100 
+        }]}>
+          Already a member? <Text style={styles.link}> Login</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  top: {
+    width: '90%',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    marginBottom: 10,
+  },
+  bannerPrimary: {
+    borderRadius: 10,
+    marginTop: 20,
+    fontSize: 33,
+    fontWeight: '800',
+    color: 'black',
+  },
+  bannerSecondary: {
+    marginBottom: 30,
+    fontSize: 20,
+    color: 'black',
+  },
+  signup: {
+    marginTop: '20%',
+  },
+  link: {
+    fontWeight: 'bold',
+    color: Colors,
+  },
+  main: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

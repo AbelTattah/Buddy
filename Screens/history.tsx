@@ -1,25 +1,35 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  View,
+} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import DocumentRenderer from '../Documents/DocumentRender';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {FlatList} from 'react-native-gesture-handler';
-import styles from '../Styling/styles';
+import {FlatList} from 'react-native';
+import DocumentRenderer from '../Documents/DocumentRender';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {userContext} from '../store/user';
+import PrimarySearch from '../Components/PrimarySearch';
+import {SecondaryButton} from '../Components/button';
+import Colors from '../Components/constants/Colors';
+import Header from '../Components/header';
 
 export const getHistory = async () => {
   try {
     const data: any = await AsyncStorage.getItem('history');
-   // console.log("Book History",data);
-    if (data==null) {
+    // console.log("Book History",data);
+    if (data == null) {
       await AsyncStorage.setItem('history', JSON.stringify({}));
       return AsyncStorage.getItem('history');
     }
     return data;
   } catch (error) {
-    return Alert.alert('Error', "An error occured");
+    return Alert.alert('Error', 'An error occured');
   }
 };
 
@@ -30,7 +40,7 @@ export const addToHistory = async (doc: {name: string; endpoint: string}) => {
     history[doc.name] = doc.endpoint;
     await AsyncStorage.setItem('history', JSON.stringify(history));
   } catch (error) {
-    return Alert.alert('Error', "An error occured");
+    return Alert.alert('Error', 'An error occured');
   }
 };
 
@@ -41,10 +51,10 @@ export const searchHistory = async (name: string) => {
     if (parsed[name]) {
       return parsed[name];
     } else {
-      return "None";
+      return 'None';
     }
   } catch (error) {
-    return Alert.alert('Error', "An error occured");
+    return Alert.alert('Error', 'An error occured');
   }
 };
 
@@ -59,17 +69,36 @@ export const removeHistory = async (name: string) => {
       return null;
     }
   } catch (error) {
-    return Alert.alert('Error', "An error occured");
+    return Alert.alert('Error', 'An error occured');
   }
 };
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const HistMain = ({navigation}) => {
   const [history, setHistory] = useState<{}>({});
   const [marked, setMarked] = useState<string[]>([]);
 
-  const {setPdf,theme} = useContext(userContext);
+  const {setPdf,setUrl, theme} = useContext(userContext);
+  const [results, setResults] = useState<any[]>([]);
+
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [placeholder, setPlaceholder] = useState<{
+    value: string;
+    color: string;
+  }>({value: 'Search for resources', color: '#d9d9d9'});
+
+  const [searching, setSearching] = useState<boolean>(false);
+
+  async function search() {
+    setPlaceholder({value: 'Search for resources', color: '#d9d9d9'});
+    if (searchInput == '') {
+      setPlaceholder({value: 'Please enter a search term !', color: '#f009'});
+      return;
+    }
+    setSearching(true);
+    setSearching(false);
+  }
 
   async function Load() {
     await getHistory().then(data => {
@@ -80,7 +109,7 @@ const HistMain = ({navigation}) => {
   async function removeMarked(name: string) {
     const edited: any = marked.map(item => {
       if (name == item) {
-        return
+        return;
       } else {
         return item;
       }
@@ -98,101 +127,160 @@ const HistMain = ({navigation}) => {
     Load();
     setInterval(() => {
       Load();
-    }
-    , 3000);
+    }, 3000);
   }, []);
 
   return (
-    <View style={{
-      backgroundColor: theme=="light"?"#fff":"#000",
-      flexDirection: 'column',
-      flex: 1,
-      alignItems: 'center',
-      justifyContent:'center'
-    }}>
-      <>
-      {marked.length > 0 ? (
-        <TouchableOpacity
-          onPress={() => {
-            removeItem();
-          }}
-          style={style.deleteButton}>
-          <Icon name="remove-outline" size={22} color="#999" />
-        </TouchableOpacity>
-      ) : (
-        <></>
-      )} 
-      </>
-      <Text style={{
-          marginTop: 35,
-          fontSize: 23,
-          color:theme=="light"?"black":"white",
-          fontWeight: '900',
-      }}>Recently Opened</Text>
-      <View style={{
-                    marginTop: 20,
-                    height: '90%',
-                    justifyContent:'center',
-                    flexDirection: 'column',
-                    alignItems: 'center'
+    <View
+      style={{
+        backgroundColor:
+          theme == 'light' ? Colors.primary200 : Colors.primary100,
+        flexDirection: 'column',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
-      {history ? (
-        <>
-        <FlatList
-          style={{
-            marginTop: 20,
-            width:"86%",
-            height:"80%",
-            marginBottom:50,
-          }}
-          showsVerticalScrollIndicator={false}
-          data={Object.keys(history).reverse()}
-          renderItem={({item}) => {
-            return (
-              <TouchableOpacity
-                onLongPress={() => {
-                  removeHistory(item);
-                }}
-                onPress={() => {
-                  const url:any = searchHistory(item)
-                  console.log("URL: ", history[item])
-                  setPdf(history[item]);
-                  navigation.navigate('View',{book:item});
-                  // if (marked.filter((name)=>name==item) == null) {
-                  //   setPdf(searchHistory(item));
-                  // } else {
-                  //   removeMarked(item);
-                  // }
-                }}
-                style={styles.button1}>
-                <Text
+      <View style={style.top}>
+        {/* <PrimarySearch
+          textInput={
+            <TextInput
+              style={style.searchInput}
+              onSubmitEditing={() => search()}
+              onChangeText={(text) => {
+                setPlaceholder({
+                  value: 'Search for resources',
+                  color: '#d9d9d9',
+                });
+                setSearchInput(text);
+              }}
+              placeholder={placeholder.value}
+              placeholderTextColor={placeholder.color}
+              value={searchInput}
+            />
+          }
+          handleSearch={() => search()}
+        /> */}
+      </View>
+
+      <View
+        style={{
+          height: '90%',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+        {Object.keys(history).length == 0 && <Text>No recent Resources</Text>}
+        {history ? (
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '90%',
+                borderBottomWidth: 0.3,
+                borderBottomColor:theme == 'light' ? Colors.primary100 : Colors.primary200,
+                paddingBottom: 15,
+                marginBottom: 20,
+                alignItems: 'center',
+              }}>
+              <Text
                 style={{
-                  color:theme=="light"?"black":"white",
-                  fontSize: 16,
-                  fontWeight: '500',
-                }}
-                >{item}</Text>
-              </TouchableOpacity>
-            );
-          }}
-          keyExtractor={item => item}
-        />
-        <Text style={{
-          position:"absolute",
-          color:"#f007",
-          bottom:10
-        }}>Hold to delete</Text>
-        </>
-      ) : (
-        <Text>No recent books</Text>
-      )}
+                  color:
+                    theme == 'light' ? Colors.primary100 : Colors.primary200,
+                }}>
+                Recents
+              </Text>
+              <Text
+                style={{
+                  color:
+                    theme == 'light' ? Colors.primary100 : Colors.primary200,
+                }}>
+                Files {`(`}
+                {Object.keys(history).length}
+                {`)`}
+              </Text>
+            </View>
+            <FlatList
+              style={{
+                width: '86%',
+                height: '80%',
+                marginBottom: 50,
+              }}
+              showsVerticalScrollIndicator={false}
+              data={Object.keys(history).reverse()}
+              renderItem={({item}) => {
+                return (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      onLongPress={() => {
+                        removeHistory(item);
+                      }}
+                      onPress={() => {
+                        const url: any = searchHistory(item);
+                        console.log('URL: ', history[item]);
+                        setUrl(history[item]);
+                        navigation.navigate('View', {book: item});
+                        // if (marked.filter((name)=>name==item) == null) {
+                        //   setPdf(searchHistory(item));
+                        // } else {
+                        //   removeMarked(item);
+                        // }
+                      }}
+                      style={style.button1}>
+                      <Text
+                        style={{
+                          color:
+                            theme == 'light'
+                              ? Colors.primary100
+                              : Colors.primary200,
+                          fontSize: 16,
+                          fontWeight: '500',
+                          width: '80%',
+                        }}>
+                        {item}
+                      </Text>
+                    </TouchableOpacity>
+                    <Icon
+                      name="close-outline"
+                      size={20}
+                      color={
+                        theme == 'light' ? Colors.primary100 : Colors.primary200
+                      }
+                      style={{
+                        position: 'absolute',
+                        right: 10,
+                        top: 10,
+                      }}
+                      onPress={() => {
+                        removeHistory(item);
+                      }}
+                    />
+                  </View>
+                );
+              }}
+              keyExtractor={item => item}
+            />
+          </>
+        ) : (
+          <Text
+            style={{
+              color: theme == 'light' ? Colors.primary100 : Colors.primary200,
+            }}>
+            No recent resource
+          </Text>
+        )}
       </View>
     </View>
   );
 };
 
 const History = ({navigation}) => {
-  const {setPdf,theme} = useContext(userContext);
+  const {setPdf, theme} = useContext(userContext);
 
   return (
     <NavigationContainer independent={true}>
@@ -200,21 +288,26 @@ const History = ({navigation}) => {
         <Stack.Screen
           name="Main"
           component={HistMain}
-          options={{headerShown: false}}
+          options={({navigation, route}: any) => {
+            return {
+              headerShadowVisible: false,
+              header: () => (
+                <Header title="History" sub="Resource" button={<></>} />
+              ),
+            };
+          }}
         />
-        <Stack.Screen name="View"
+        <Stack.Screen
+          name="View"
           options={({route}) => {
             const title = route.params.book;
             return {
               title: title,
-              headerStyle: {
-                backgroundColor: theme=="light"?"#fff":"#000",
-              },
-              headerTintColor:theme=="light"?"#000":"#fff"
+              headerShown: false,
             };
-            
           }}
-        component={DocumentRenderer} />
+          component={DocumentRenderer}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -230,10 +323,35 @@ const style = StyleSheet.create({
     zIndex: 3,
     elevation: 2,
   },
+  button1: {
+    width: '100%',
+    height: 'auto',
+    paddingBottom: 20,
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    alignItems: 'flex-start',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
   heading: {
     marginTop: 35,
     fontSize: 20,
-    color:"black",
+    color: 'black',
     fontWeight: '500',
+  },
+  top: {
+    width: '100%',
+    margin: 5,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchInput: {
+    flex: 1,
+    height: 30,
+    color: '#000',
+    paddingHorizontal: 10,
+    paddingVertical: 0,
   },
 });

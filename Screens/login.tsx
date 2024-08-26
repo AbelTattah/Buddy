@@ -7,16 +7,19 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  StyleSheet,
 } from 'react-native'; // Importing components from react-native
-import styles from '../Styling/styles'; // Importing the styles from the styles file
 import {useEffect, useState, useLayoutEffect} from 'react'; // Importing the useEffect and useState component from react
 import {db} from '../firebase'; // Importing the db from the firebase
 import {doc, getDoc} from 'firebase/firestore'; // Importing the doc and getDoc from firebase/firestore
 import {userContext} from '../store/user';
 import {useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Colors from '../Components/constants/Colors';
+import PrimaryButton from '../Components/button';
+import PrimaryTextInput from '../Components/textinput';
 
-export async function SaveInStorage(data: any,name:"string") {
+export async function SaveInStorage(data: any, name: any) {
   try {
     await AsyncStorage.setItem(
       'Data',
@@ -28,13 +31,17 @@ export async function SaveInStorage(data: any,name:"string") {
 }
 
 // Login component
-export default function Login({navigation}) {
-  const [emaill, setEmaill] = useState(''); // Email state
-  const [pass, setPass] = useState(''); // Password state
-  const [suds, setSuds] = useState({}); // User data state
-  const [regg, setRegg] = useState('Hm'); // Registration state
-  const [checking,setChecking] = useState(true)
+export default function Login({navigation}: any) {
+  const [emaill, setEmaill] = useState<string>(''); // Email state
+  const [pass, setPass] = useState<string>(''); // Password state
+  const [suds, setSuds] = useState<any>({}); // User data state
+  const [checking, setChecking] = useState(true);
   const context = useContext(userContext);
+  const [regg, setRegg] = useState<
+    '' | 'succ' | 'inp' | 'prob' | 'rnd' | 'prob1' | 'prob2'
+  >('rnd'); // Registration state
+
+  const {theme} = useContext(userContext)
 
   // Sign in function
   async function signIn() {
@@ -58,13 +65,13 @@ export default function Login({navigation}) {
         .then(response => response.json())
         .then(data => {
           if (data.error == undefined) {
-            SaveInStorage(data,suds['SNAME']);
+            SaveInStorage(data, suds['SNAME']);
             context.setAuthState(true);
             context.setName(suds['SNAME']);
             setRegg('succ');
             navigation.navigate('App1');
           } else {
-            setRegg('Hm');
+            setRegg('rnd');
             Alert.alert('Error', `${data.error.message}`, [
               {
                 text: 'Ok',
@@ -73,7 +80,7 @@ export default function Login({navigation}) {
           }
         })
         .catch(error => {
-          setRegg('Hm');
+          setRegg('rnd');
           Alert.alert('Error', error.message, [
             {
               text: 'Ok',
@@ -88,8 +95,6 @@ export default function Login({navigation}) {
       ]);
     }
   }
-
-
 
   // function to read user data from firestore
   async function DataRead() {
@@ -128,124 +133,102 @@ export default function Login({navigation}) {
       } catch (error) {
         //Do nothing
       }
-      setTimeout(()=>{
-        setChecking(false)
-      },2000)
+      setTimeout(() => {
+        setChecking(false);
+      }, 2000);
     }
     autoLogin();
   });
 
   if (checking) {
-    return(<View style={{
-      flex:1,
-      justifyContent:'center',
-      alignItems:"center",
-      backgroundColor:"white"
-    }}>
-    <ActivityIndicator size={53} color="#999" />
-    </View>)
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+        }}>
+        <ActivityIndicator size={53} color={Colors.secondary200} />
+      </View>
+    );
   }
 
   // Render the page
   return (
-    <View style={styles.loginMain}>
-      <View style={{
-        width:"75%",
-        justifyContent:'flex-start',
-        flexDirection:'row'
-      }}>
-      <Image style={{ marginTop:90,height:50,width:50}} source={require('../assets/logo.png')} />
-      </View>
-      <View style={{
-        width:"72%",
-        justifyContent:'flex-start',
-        flexDirection:'row'
-      }}>
-      <Text
-        style={{
-          borderRadius: 10,
-          marginTop:60,
-          fontSize:33,
-          color:"black",
-          fontWeight:"700"
-        }}>
-        Login and 
-      </Text>
-      </View>
-      <View style={{
-        width:"72%",
-        justifyContent:'flex-start',
-        flexDirection:'row'
-      }}>
-      <Text style={{
-        fontSize:20,
-        color:"black"
-      }}>
-        Let's Start Reading!
-      </Text>
-      </View>
-      <KeyboardAvoidingView style={styles.loginIn} behavior="padding">
-        {/* Login inputs */}
-        <TextInput
-          style={[styles.loginTextIn,{color:"black"}]}
-          inputMode="email"
-          placeholder="   Email"
-          autoCapitalize="none"
-          placeholderTextColor="black"
-          onChangeText={text => setEmaill(text)}
-        />
-        <TextInput
-          secureTextEntry
-          ref={input => {
-            this.textInput1 = input;
-          }}
-          style={[styles.loginTextIn,{color:"black"}]}
-          placeholder="   Password"
-          autoCapitalize="none"
-          placeholderTextColor="black"
-          onChangeText={text => setPass(text)}
-        />
-      </KeyboardAvoidingView>
-      <TouchableOpacity style={styles.loginButton} onPress={() => signIn()}>
-        <Text style={styles.loginButtonText}>Log in</Text>
-      </TouchableOpacity>
-      {/* <Text style={styles.loginTextt1}>Forgot password?</Text>
-      <Text style={styles.loginTextt2}>Privacy</Text> */}
-      <View style={styles.regButtonView}>
-        <View style={styles.loginRegisterLines}></View>
-        <Text style={{color:"black"}} >New to Buddy?</Text>
-        <View style={styles.loginRegisterLines}></View>
-      </View>
-      <TouchableOpacity
-          style={styles.loginReg}
-          onPress={() => navigation.navigate('Register')}>
-          <Text style={[styles.loginRegText,{color:"black"}]}> Sign Up</Text>
-        </TouchableOpacity>
+    <View style={styles.container}>
       <>
+        <Image source={require('../assets/logo.png')} style={styles.logo} />
         {regg === 'inp' ? (
           <>
-            <Text style={{color:"black"}}>
+            <Text style={{color: 'black'}}>
               Logging in ... <ActivityIndicator color="#2407f2" />
             </Text>
           </>
         ) : regg === 'prob' ? (
           <>
-            <Text style={{color:"black"}}>Wrong email or password!</Text>
+            <Text style={{color: 'black'}}>Wrong email or password!</Text>
           </>
         ) : regg === 'succ' ? (
           <>
-            <Text style={{color:"black"}}>Log In Succesful</Text>
-          </>
-        ) : regg === 'no' ? (
-          <>
-            <Text style={{color:"black"}}>You do not have an accout. Go to the registration page</Text>
+            <Text style={{color: 'black'}}>Log In Succesful</Text>
           </>
         ) : (
           <>
-            <Text style={{color:"black",position:"absolute",bottom:10}}>Buddy v.1.0</Text>
+            <Text style={{color: 'black'}}>Buddy v.1.0</Text>
           </>
         )}
+        <PrimaryTextInput
+         onSubmitEditing={signIn}
+          secure={false}
+          email={false}
+          inputMode="text"
+          placeholder=" Enter your Email"
+          setter={async e => setEmaill(e)}
+        />
+        <PrimaryTextInput
+          onSubmitEditing={signIn}
+          secure={false}
+          email={false}
+          inputMode="text"
+          placeholder=" Enter your password"
+          setter={async e => setPass(e)}
+        />
+        <PrimaryButton
+          radius={10}
+          title="Login"
+          size="big"
+          pressHandler={async () => {
+            signIn();
+          }}
+        />
       </>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={[styles.signup,{
+           color:Colors.primary100
+        }]}>
+          Not a member? <Text style={styles.link}>Sign Up</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  signup: {
+    marginTop: '20%',
+  },
+  link: {
+    fontWeight: 'bold',
+    color: Colors.primary100,
+  },
+  logo: {
+    width: "100%",
+    height: "40%",
+    marginBottom: 30,
+  },
+});

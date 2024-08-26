@@ -8,12 +8,10 @@ import {
 } from 'react-native'; // Importing components from react-native
 import React, {useContext, useState} from 'react'; // Importing components from react
 import Pdf from 'react-native-pdf'; // Importing the pdf component from react-native-pdf
-import {DocumentView, RNPdftron} from 'react-native-pdftron';
 import {TextInput} from 'react-native-gesture-handler';
 import {userContext} from '../store/user';
 import styles from '../Styling/styles';
 
-RNPdftron.enableJavaScript(true);
 
 // Component to render pdf
 export default function PdfComp({url}) {

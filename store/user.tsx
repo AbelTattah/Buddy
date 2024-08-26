@@ -6,10 +6,12 @@ export const userContext = createContext({
     name: "",
     isLoggedIn:false,
     pdf:"",
+    url:"",
     theme:"light",
     statusBar:false,
     setStatusBar:(value:boolean)=>{},
     setTheme:(sid:string)=>{},
+    setUrl:(url:string)=>{},
     setSiv:(sid:boolean)=>{},
     setName:(name:string) =>{},
     setAuthState:(auth:boolean)=>{},
@@ -20,10 +22,15 @@ export const userContext = createContext({
 function UserContextProvider({children}:any) {
     const [siv,setSIV] = useState(false)
     const [name,setNAME] = useState("")
-    const [isLoggedIn,setAUTHSTATE] = useState(false)
+    const [isLoggedIn,setAUTHSTATE] = useState(true)
     const [pdf,setPDF] = useState("")
     const [theme,setTHEME] = useState("light")
     const [statusBar,setStatusbar] = useState(false)
+    const [url,setURL] = useState("")
+
+    function setUrl(url:string){
+        setURL(url)
+    }
 
     async function setStatusBar(value:boolean) {
         setStatusbar(value)
@@ -81,7 +88,7 @@ function UserContextProvider({children}:any) {
     },[])
 
      return (
-        <userContext.Provider value={{theme,statusBar,setStatusBar,setTheme,name,setName,siv,setSiv,isLoggedIn,setAuthState,pdf,setPdf}}>
+        <userContext.Provider value={{url, setUrl, theme,statusBar,setStatusBar,setTheme,name,setName,siv,setSiv,isLoggedIn,setAuthState,pdf,setPdf}}>
             {children}
         </userContext.Provider>
     )

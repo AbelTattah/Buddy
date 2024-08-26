@@ -1,20 +1,28 @@
-import React, { useEffect } from 'react' // Importing components from react
-import PdfComp from '../Components/pdf' // Importing the pdf component
-import { useContext } from 'react'
-import { userContext } from '../store/user'
+import React, { useEffect } from 'react'; // Importing components from react
+import { useContext } from 'react';
+import { DocumentView, RNPdftron } from 'react-native-pdftron';
+import { userContext } from '../store/user';
+import { Alert, Image } from 'react-native';
+
+RNPdftron.initialize('Insert commercial license key here after purchase');
+RNPdftron.enableJavaScript(true);
+
 
 // Component to the pdf
-const DocumentRenderer = ({ navigation }:any) => {
+const DocumentRenderer = ({ navigation, route }: any) => {
   // Render the pdf component
-  const context = useContext(userContext)
+  const context = useContext(userContext);
   useEffect(() => {
-    console.log(context.pdf)
-  }, [])
-  return (
-      <PdfComp
-        url={`${context.pdf}`}
-      />
-  )
-}
+    console.log(context.url);
+  }, []);
 
-export default DocumentRenderer
+  return (
+    <DocumentView
+      onLeadingNavButtonPressed={() => navigation.navigate('Main')}
+      document={`${context.url}`}
+      showLeadingNavButton={true}
+    />
+  );
+};
+
+export default DocumentRenderer;

@@ -9,6 +9,7 @@ import {
   StatusBar,
   Alert,
   Appearance,
+  ActivityIndicator,
 } from 'react-native'; // Importing components from react-native
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'; // Importing the createBottomTabNavigator from @react-navigation/bottom-tabs
 
@@ -30,6 +31,7 @@ import Home from './Screens/home';
 import Icon from 'react-native-vector-icons/Ionicons';
 import History from './Screens/history';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Colors from './Components/constants/Colors';
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -65,9 +67,23 @@ function App1({navigation}: any) {
   }
 
   React.useEffect(()=>{
-    getColorScheme()
     getStatusBar()
-  },[])
+    if(isLoggedIn==false){
+      navigation.navigate("Login")
+    }
+  })
+
+  if (isLoggedIn==false) {
+    return (
+      <View style={{
+        flex:1,
+        justifyContent:"center",
+        alignItems:"center"
+      }}>
+      <ActivityIndicator size="large" color={Colors.primary100} />
+      </View>
+    )
+  }
   return (
     <>
       <StatusBar
@@ -233,7 +249,7 @@ export default function App() {
           <Stack.Screen
             name="Register"
             component={Register}
-            options={{title: '', headerShadowVisible: false}}
+            options={{title: '', headerShown: false}}
           />
           <Stack.Screen
             name="App1"
