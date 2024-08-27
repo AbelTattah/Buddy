@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import React from 'react';
 import RNFS from 'react-native-fs';
 import PrimaryButton from '../button';
@@ -26,7 +26,7 @@ export default function Download({
     },
   };
   async function download() {
-    console.log(url)
+    ToastAndroid.show("Download Started",ToastAndroid.SHORT)
     await RNFS.downloadFile(options)
       .promise.then((res) => {
         console.log('The file saved to ', res);

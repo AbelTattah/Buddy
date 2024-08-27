@@ -11,13 +11,21 @@ import {
 } from 'react-native'; // Importing components from react-native
 import {useEffect, useState, useLayoutEffect} from 'react'; // Importing the useEffect and useState component from react
 import {db} from '../firebase'; // Importing the db from the firebase
-import {doc, getDoc} from 'firebase/firestore'; // Importing the doc and getDoc from firebase/firestore
+import {doc, getDoc, setDoc} from 'firebase/firestore'; // Importing the doc and getDoc from firebase/firestore
 import {userContext} from '../store/user';
 import {useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../Components/constants/Colors';
 import PrimaryButton from '../Components/button';
 import PrimaryTextInput from '../Components/textinput';
+import {
+  statusCodes,
+  isErrorWithCode,
+  GoogleSignin,
+} from '@react-native-google-signin/google-signin';
+import Icon from 'react-native-vector-icons/AntDesign';
+
+GoogleSignin.configure();
 
 export async function SaveInStorage(data: any, name: any) {
   try {
@@ -41,7 +49,7 @@ export default function Login({navigation}: any) {
     '' | 'succ' | 'inp' | 'prob' | 'rnd' | 'prob1' | 'prob2'
   >('rnd'); // Registration state
 
-  const {theme} = useContext(userContext)
+  const {theme} = useContext(userContext);
 
   // Sign in function
   async function signIn() {
@@ -95,6 +103,27 @@ export default function Login({navigation}: any) {
       ]);
     }
   }
+
+  const googleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      // Attempt to sign in
+      try {
+        SaveInStorage(userInfo, userInfo.user.name);
+        context.setAuthState(true);
+        context.setName(userInfo.user.name);
+        setRegg('succ');
+        navigation.navigate('App1');
+      } catch (error) {}
+    } catch (error) {
+      Alert.alert('Error', error.message, [
+        {
+          text: 'Ok',
+        },
+      ]);
+    }
+  };
 
   // function to read user data from firestore
   async function DataRead() {
@@ -179,7 +208,7 @@ export default function Login({navigation}: any) {
           </>
         )}
         <PrimaryTextInput
-         onSubmitEditing={signIn}
+          onSubmitEditing={signIn}
           secure={false}
           email={false}
           inputMode="text"
@@ -202,11 +231,21 @@ export default function Login({navigation}: any) {
             signIn();
           }}
         />
+        <TouchableOpacity onPress={googleSignIn} style={styles.google}>
+          <Image
+            source={require('../assets/google.png')}
+            style={{width: 30, height: 30}}
+          />
+        </TouchableOpacity>
       </>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={[styles.signup,{
-           color:Colors.primary100
-        }]}>
+        <Text
+          style={[
+            styles.signup,
+            {
+              color: Colors.primary100,
+            },
+          ]}>
           Not a member? <Text style={styles.link}>Sign Up</Text>
         </Text>
       </TouchableOpacity>
@@ -219,16 +258,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  google: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary200,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 10,
+  },
   signup: {
-    marginTop: '20%',
+    marginTop: '10%',
   },
   link: {
     fontWeight: 'bold',
     color: Colors.primary100,
   },
   logo: {
-    width: "100%",
-    height: "40%",
+    width: '100%',
+    height: '40%',
     marginBottom: 30,
   },
 });

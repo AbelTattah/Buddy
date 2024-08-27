@@ -313,7 +313,7 @@ const DocumentNav = ({navigation}) => {
           component={DocumentSearch}
         />
         <Stack.Screen
-          name="DocumentView"
+          name="View"
           options={({route}) => {
             const title = route.params.book;
             return {

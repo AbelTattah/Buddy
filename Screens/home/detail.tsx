@@ -50,9 +50,10 @@ const Detail = ({navigation, route}) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
+          paddingBottom:5,
           width: '90%',
-          maxHeight: 80,
-          padding: 15,
+          maxHeight: 50,
+          paddingTop: 15,
           marginBottom: 20,
           borderBottomWidth: 0.3,
           borderBlockColor:theme == 'light' ? Colors.primary100 : Colors.primary200,
@@ -66,12 +67,18 @@ const Detail = ({navigation, route}) => {
           ]}>
           {name}
         </Text>
+        <View style={{
+          height:"100%",
+          justifyContent:"center",
+          alignItems:'center'
+        }}>
         <Icon
           name="share"
           size={30}
           onPress={ShareFile}
           color={theme == 'light' ? Colors.primary100 : Colors.primary200}
         />
+        </View>
       </View>
       <View style={styles.imageContainer}>
         {image == undefined || image == '' ? (
@@ -150,18 +157,21 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '90%',
     marginBottom: 35,
+
     height: '60%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: 16,
-    height: 60,
+    height: 20,
     fontWeight: 'bold',
     maxWidth: '80%',
   },
   preview: {
     marginTop: 20,
+    borderColor:Colors.primary100,
+    borderWidth:0.5,
     borderRadius: 10,
     width: '90%',
     height: '100%',
