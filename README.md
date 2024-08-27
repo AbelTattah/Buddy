@@ -2,6 +2,8 @@
 Tired of searching for school books? Tired of downloading many book pdfs? Look no further.
 Buddy is here to help. Buddy is an android app. Buddy gives you instant access to free books.
 
+Download Buddy here: [Download link](https://github.com/AbelTattah/Buddy/releases/download/v/buddy.apk)
+
 ### Homepage
 
 <img src="/assets/screenshots/Home.png" alt="BuddyHomepage" width="200">
