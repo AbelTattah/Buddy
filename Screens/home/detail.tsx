@@ -1,20 +1,21 @@
 import {StyleSheet, Text, View, Image, Share} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import PrimaryButton from '../../Components/button';
+import PrimaryButton from '../../Components/buttonPrimary';
 import Download from '../../Components/functions/download';
-import {addToHistory, searchHistory} from '../history';
+import {searchHistory} from '../history';
 import {userContext} from '../../store/user';
-import {check} from 'react-native-permissions';
 import Icon from 'react-native-vector-icons/Entypo';
 import Colors from '../../Components/constants/Colors';
 
-const Detail = ({navigation, route}) => {
+// Book Detail Component
+const Detail = ({navigation, route}: any) => {
   const {image, name} = route.params;
   const [progress, setProgress] = useState(0);
   const [item, setItem] = useState<any>({});
 
-  const {setPdf, url, setUrl, theme} = useContext(userContext);
-
+  const {url, setUrl, theme} = useContext(userContext);
+  
+  // Check whether the book is locally Available
   async function checkHistory() {
     await searchHistory(name).then(res => {
       if (res !== 'None') {
@@ -23,7 +24,8 @@ const Detail = ({navigation, route}) => {
       }
     });
   }
-
+  
+  // File sharing function
   function ShareFile() {
     Share.share({
       title: 'Share',
@@ -31,7 +33,8 @@ const Detail = ({navigation, route}) => {
       url: item['endpoint'],
     });
   }
-
+  
+  // Check book availability locally once after first render
   useEffect(() => {
     checkHistory();
   }, []);
@@ -50,13 +53,14 @@ const Detail = ({navigation, route}) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingBottom:5,
+          paddingBottom: 5,
           width: '90%',
           maxHeight: 50,
           paddingTop: 15,
           marginBottom: 20,
           borderBottomWidth: 0.3,
-          borderBlockColor:theme == 'light' ? Colors.primary100 : Colors.primary200,
+          borderBlockColor:
+            theme == 'light' ? Colors.primary100 : Colors.primary200,
         }}>
         <Text
           style={[
@@ -67,17 +71,18 @@ const Detail = ({navigation, route}) => {
           ]}>
           {name}
         </Text>
-        <View style={{
-          height:"100%",
-          justifyContent:"center",
-          alignItems:'center'
-        }}>
-        <Icon
-          name="share"
-          size={30}
-          onPress={ShareFile}
-          color={theme == 'light' ? Colors.primary100 : Colors.primary200}
-        />
+        <View
+          style={{
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            name="share"
+            size={30}
+            onPress={ShareFile}
+            color={theme == 'light' ? Colors.primary100 : Colors.primary200}
+          />
         </View>
       </View>
       <View style={styles.imageContainer}>
@@ -170,8 +175,8 @@ const styles = StyleSheet.create({
   },
   preview: {
     marginTop: 20,
-    borderColor:Colors.primary100,
-    borderWidth:0.5,
+    borderColor: Colors.primary100,
+    borderWidth: 0.5,
     borderRadius: 10,
     width: '90%',
     height: '100%',

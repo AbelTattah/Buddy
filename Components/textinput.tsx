@@ -10,22 +10,24 @@ import {userContext} from '../store/user';
  * @returns {ReactNode} A React Native element that renders a Text Input Component
  */
 
-export default function PrimaryTextInput({
-  placeholder,
-  setter,
-  onSubmitEditing,
-  secure,
-  inputMode,
-}: {
+interface PrimaryTextInput {
   placeholder: string;
   setter: (e: any) => {};
   onSubmitEditing?: () => any;
   email: boolean;
   inputMode: string;
   secure: boolean;
-}) {
+}
+
+export default function PrimaryTextInput({
+  placeholder,
+  setter,
+  onSubmitEditing,
+  secure,
+  inputMode,
+}: PrimaryTextInput) {
   const {theme} = useContext(userContext);
-  const color = theme=="light"? Colors.primary100 : Colors.primary200
+  const color = theme == 'light' ? Colors.primary100 : Colors.primary200;
   return (
     <TextInput
       spellCheck={false}

@@ -3,15 +3,22 @@ import React, {useContext} from 'react';
 import {userContext} from '../store/user';
 import Colors from './constants/Colors';
 
-const GenreCard = ({
-  genre,
-  search,
-  Icon,
-}: {
+/**
+ * This is a button for displaying Genres
+ *
+ * @param {string} genre The genre of books
+ * @param {CallableFunction} search  Search function
+ * @param {number} Icon The icon on the button
+ * @returns {ReactNode} A React Native element that renders a button
+ */
+
+interface GenreButton {
   genre: string;
   search: () => any;
   Icon: any;
-}) => {
+}
+
+const GenreButton = ({genre, search, Icon}: GenreButton) => {
   const {theme} = useContext(userContext);
 
   return (
@@ -48,12 +55,5 @@ const GenreCard = ({
   );
 };
 
-export default GenreCard;
+export default GenreButton;
 
-const styles = StyleSheet.create({
-  genre: {
-    fontWeight: '700',
-    fontSize: 15,
-    marginRight: 20,
-  },
-});

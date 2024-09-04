@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Alert,
 } from 'react-native'; // Importing components from react-native
 import React, {useState, useContext, useEffect, useRef} from 'react'; // Importing the useState hook from react
 import axios from 'axios'; // Importing axios
@@ -17,26 +16,21 @@ import {NavigationContainer} from '@react-navigation/native'; // Importing the N
 import {userContext} from '../store/user';
 import {useWindowDimensions} from 'react-native';
 import DocumentRender from './DocumentRender';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {addToHistory} from '../Screens/history';
 import PrimarySearch from '../Components/primarySearch';
 import Detail from '../Screens/home/detail';
-import {set} from 'firebase/database';
 import Colors from '../Components/constants/Colors';
 
 /*
 TODO: 
 
 3. Previous Searches
-1. Book Persistence
-2. Previous Books
 */
 
 const Stack = createNativeStackNavigator();
 
-var titlesCache: any[] = [];
-var endpoints: any[] = [];
-var images: any[] = [];
+var titlesCache: string[] = [];
+var endpoints: string[] = [];
+var images: string[] = [];
 
 // Load fonts
 const DocumentSearch = ({navigation}: any) => {
@@ -47,9 +41,7 @@ const DocumentSearch = ({navigation}: any) => {
   const [userComms, setComms] = useState<string>('');
   const [noReslts, setNoResults] = useState(false);
 
-  const context = useContext(userContext);
   const {theme, url, setUrl} = useContext(userContext);
-  const ref = useRef();
 
   const [placeholder, setPlaceholder] = useState('Enter book name');
   const [placeholderColor, setPlaceholderColor] = useState('grey');
@@ -87,10 +79,8 @@ const DocumentSearch = ({navigation}: any) => {
       }
       setTitles(titlesCache);
       setLoading(false);
-      console.log(endpoints);
     } catch (error) {
       setLoading(false);
-      console.log(error);
       setError(true);
     }
     setLoading(false);
@@ -248,11 +238,6 @@ const DocumentSearch = ({navigation}: any) => {
                       marginRight: 10,
                     }}
                     onPress={() => {
-                      console.log(endpoints[i]);
-                      // context.setPdf(endpoints[i]);
-                      // setCurrentPdf(title);
-                      // addToHistory({name:title,endpoint:endpoints[i]})
-                      // navigationHandler();
                       setUrl(endpoints[i]);
                       navigation.navigate('Detail', {
                         name: title,
@@ -319,7 +304,8 @@ const DocumentNav = ({navigation}) => {
             return {
               title: title,
               headerShown: false,
-          }}}
+            };
+          }}
           component={DocumentRender}
         />
         <Stack.Screen

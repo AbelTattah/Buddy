@@ -1,11 +1,4 @@
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
@@ -14,11 +7,10 @@ import {FlatList} from 'react-native';
 import DocumentRenderer from '../Documents/DocumentRender';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {userContext} from '../store/user';
-import PrimarySearch from '../Components/PrimarySearch';
-import {SecondaryButton} from '../Components/button';
 import Colors from '../Components/constants/Colors';
 import Header from '../Components/header';
 
+// Get book history from local storage
 export const getHistory = async () => {
   try {
     const data: any = await AsyncStorage.getItem('history');
@@ -33,6 +25,7 @@ export const getHistory = async () => {
   }
 };
 
+// Store book reference in local storage
 export const addToHistory = async (doc: {name: string; endpoint: string}) => {
   try {
     const previous: any = await getHistory();
@@ -44,6 +37,7 @@ export const addToHistory = async (doc: {name: string; endpoint: string}) => {
   }
 };
 
+// Search for a particular book in local storage
 export const searchHistory = async (name: string) => {
   try {
     const history: any = await getHistory();
@@ -58,6 +52,7 @@ export const searchHistory = async (name: string) => {
   }
 };
 
+// Remove a book from local storage
 export const removeHistory = async (name: string) => {
   try {
     const history: any = await getHistory();
@@ -75,52 +70,15 @@ export const removeHistory = async (name: string) => {
 
 const Stack = createNativeStackNavigator();
 
+// Main History Component
 const HistMain = ({navigation}) => {
   const [history, setHistory] = useState<{}>({});
-  const [marked, setMarked] = useState<string[]>([]);
-
-  const {setPdf,setUrl, theme} = useContext(userContext);
-  const [results, setResults] = useState<any[]>([]);
-
-  const [searchInput, setSearchInput] = useState<string>('');
-  const [placeholder, setPlaceholder] = useState<{
-    value: string;
-    color: string;
-  }>({value: 'Search for resources', color: '#d9d9d9'});
-
-  const [searching, setSearching] = useState<boolean>(false);
-
-  async function search() {
-    setPlaceholder({value: 'Search for resources', color: '#d9d9d9'});
-    if (searchInput == '') {
-      setPlaceholder({value: 'Please enter a search term !', color: '#f009'});
-      return;
-    }
-    setSearching(true);
-    setSearching(false);
-  }
+  const {setUrl, theme} = useContext(userContext);
 
   async function Load() {
     await getHistory().then(data => {
       setHistory(JSON.parse(data));
     });
-  }
-
-  async function removeMarked(name: string) {
-    const edited: any = marked.map(item => {
-      if (name == item) {
-        return;
-      } else {
-        return item;
-      }
-    });
-    setMarked(edited);
-  }
-
-  async function removeItem() {
-    for (var u = 0; u < marked.length; u++) {
-      await removeHistory(marked[u]);
-    }
   }
 
   useEffect(() => {
@@ -140,28 +98,7 @@ const HistMain = ({navigation}) => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <View style={style.top}>
-        {/* <PrimarySearch
-          textInput={
-            <TextInput
-              style={style.searchInput}
-              onSubmitEditing={() => search()}
-              onChangeText={(text) => {
-                setPlaceholder({
-                  value: 'Search for resources',
-                  color: '#d9d9d9',
-                });
-                setSearchInput(text);
-              }}
-              placeholder={placeholder.value}
-              placeholderTextColor={placeholder.color}
-              value={searchInput}
-            />
-          }
-          handleSearch={() => search()}
-        /> */}
-      </View>
-
+      <View style={style.top}></View>
       <View
         style={{
           height: '90%',
@@ -178,7 +115,8 @@ const HistMain = ({navigation}) => {
                 justifyContent: 'space-between',
                 width: '90%',
                 borderBottomWidth: 0.3,
-                borderBottomColor:theme == 'light' ? Colors.primary100 : Colors.primary200,
+                borderBottomColor:
+                  theme == 'light' ? Colors.primary100 : Colors.primary200,
                 paddingBottom: 15,
                 marginBottom: 20,
                 alignItems: 'center',

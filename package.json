@@ -1,9 +1,10 @@
 {
   "name": "Buddy",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "update-version": "yarn version --new-version patch --no-git-tag-version && npx react-native-version --never-amend",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

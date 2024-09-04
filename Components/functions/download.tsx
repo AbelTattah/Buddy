@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import React from 'react';
 import RNFS from 'react-native-fs';
-import PrimaryButton from '../button';
+import PrimaryButton from '../buttonPrimary';
 import { SetStateAction } from 'react';
 import { addToHistory } from '../../Screens/history';
 import { useState } from 'react';
@@ -26,6 +26,7 @@ export default function Download({
     },
   };
   async function download() {
+    setState(0.1);
     ToastAndroid.show("Download Started",ToastAndroid.SHORT)
     await RNFS.downloadFile(options)
       .promise.then((res) => {
@@ -35,7 +36,7 @@ export default function Download({
         addToHistory({ name: name, endpoint: dest });
       })
       .catch((err) => {
-        Alert.alert('Error',err.message,[
+        Alert.alert('Error',err.message+". Try again",[
           {
             "text":"Ok"
           }

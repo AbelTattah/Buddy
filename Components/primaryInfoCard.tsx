@@ -12,6 +12,18 @@ import Colors from './constants/Colors';
  * @returns {ReactNode} A React Native element that renders a header
  */
 
+interface PrimaryInfoCard {
+  name: string;
+  date: string;
+  image: string;
+  buttons: any;
+  text: string;
+  type: string;
+  list: boolean;
+  onPress?: () => void;
+  onLongPress?: () => void;
+}
+
 function PrimaryInfoCard({
   name,
   date,
@@ -22,17 +34,7 @@ function PrimaryInfoCard({
   list,
   onPress,
   onLongPress,
-}: {
-  name: string;
-  date: string;
-  image: string;
-  buttons: any;
-  text: string;
-  type: string;
-  list: boolean;
-  onPress?: () => void;
-  onLongPress?: () => void;
-}) {
+}: PrimaryInfoCard) {
   useEffect(() => {
     console.log(image);
   }, [image]);
@@ -69,7 +71,7 @@ function PrimaryInfoCard({
               style={{
                 fontSize: 15,
                 width: '100%',
-                height:40,
+                height: 40,
                 color: theme == 'light' ? Colors.primary100 : Colors.primary200,
                 fontFamily: 'Roboto',
                 fontWeight: 'bold',
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     height: 'auto',
-    paddingBottom:10,
+    paddingBottom: 10,
     overflow: 'hidden',
     maxHeight: 100,
     padding: 10,

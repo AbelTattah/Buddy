@@ -15,10 +15,11 @@ import {db} from '../firebase'; // Importing the db from the firebase
 import {userContext} from '../store/user';
 import {useContext} from 'react';
 import {SaveInStorage} from './login';
-import PrimaryButton from '../Components/button';
+import PrimaryButton from '../Components/buttonPrimary';
 import PrimaryTextInput from '../Components/textinput';
 import {NavigationProp} from '@react-navigation/native';
 import Colors from '../Components/constants/Colors';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Register component
 export default function Register({navigation}: any) {
@@ -31,6 +32,7 @@ export default function Register({navigation}: any) {
 
   const ref = useRef('textInput');
   const context = useContext(userContext);
+  const [visible, setVisible] = useState<boolean>(false);
 
   // function to create user collection in firestore
   async function createUserCollection() {
@@ -79,7 +81,7 @@ export default function Register({navigation}: any) {
             //Navigate to login page
             setTimeout(() => {
               setEmail('');
-              navigation.navigate('App1');
+              navigation.replace('App1');
             }, 4500);
           } else {
             Alert.alert('Error Signing Up', data.error.message, [
@@ -113,7 +115,7 @@ export default function Register({navigation}: any) {
       {regg === 'inp' ? (
         <>
           <Text style={{color: 'black'}}>
-            Signing you up... <ActivityIndicator color="#2407f2" />
+            <ActivityIndicator color="#2407f2" />
           </Text>
         </>
       ) : regg === 'prob' ? (
@@ -149,14 +151,14 @@ export default function Register({navigation}: any) {
           secure={false}
           email={false}
           inputMode="text"
-          placeholder=" Full Legal Name"
+          placeholder="    Full Legal Name"
           setter={async e => setNameid(e)}
           onSubmitEditing={() => {
             signUp();
           }}
         />
         <PrimaryTextInput
-          placeholder=" Email"
+          placeholder="    Email"
           secure={false}
           email={false}
           inputMode="text"
@@ -165,16 +167,36 @@ export default function Register({navigation}: any) {
             signUp();
           }}
         />
-        <PrimaryTextInput
-          secure={false}
-          email={false}
-          inputMode="text"
-          placeholder=" Password"
-          setter={async e => setPass(e)}
-          onSubmitEditing={() => {
-            signUp();
-          }}
-        />
+        <View style={styles.passWord}>
+          <PrimaryTextInput
+            onSubmitEditing={signUp}
+            secure={!visible}
+            email={false}
+            inputMode="text"
+            placeholder="Enter your password"
+            setter={async e => setPass(e)}
+          />
+          <Text
+            style={{
+              marginRight: 10,
+            }}>
+            {visible ? (
+              <Icon
+                onPress={() => setVisible(false)}
+                name="visibility"
+                size={22}
+                color="#999"
+              />
+            ) : (
+              <Icon
+                onPress={() => setVisible(true)}
+                name="visibility-off"
+                size={22}
+                color="#999"
+              />
+            )}
+          </Text>
+        </View>
         <PrimaryButton
           radius={10}
           size="big"
@@ -183,9 +205,13 @@ export default function Register({navigation}: any) {
         />
       </KeyboardAvoidingView>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={[styles.signup ,{
-          color: Colors.primary100 
-        }]}>
+        <Text
+          style={[
+            styles.signup,
+            {
+              color: Colors.primary100,
+            },
+          ]}>
           Already a member? <Text style={styles.link}> Login</Text>
         </Text>
       </TouchableOpacity>
@@ -227,11 +253,24 @@ const styles = StyleSheet.create({
   },
   link: {
     fontWeight: 'bold',
-    color: Colors,
+    color: Colors.primary100,
   },
   main: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  passWord: {
+    width: '90%',
+    height: 60,
+    margin: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
   },
 });

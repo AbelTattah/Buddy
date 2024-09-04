@@ -45,3 +45,4 @@ eas.json
 firebase.ts
 
 google-services.json
+/android/.env

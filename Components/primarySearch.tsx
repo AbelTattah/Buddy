@@ -4,6 +4,14 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {userContext} from '../store/user';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
+/**
+ *  Primary Search Bar
+ *
+ * @param {CallableFunction}  handleSearch A callback function to handle search
+ * @param {TextInput} textInput A TextInput component from React Native
+ * @returns {ReactNode} A React Native element that renders a header
+ */
+
 const PrimarySearch = ({
   textInput,
   handleSearch,

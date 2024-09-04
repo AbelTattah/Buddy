@@ -3,6 +3,7 @@ import React, {useState, useContext} from 'react';
 import {userContext} from '../../store/user';
 import Colors from '../../Components/constants/Colors';
 
+// User Preferences
 export default function Preferences() {
   const {siv, setSiv, theme, statusBar, setStatusBar, setTheme} =
     useContext(userContext);
@@ -10,7 +11,8 @@ export default function Preferences() {
   const [isTwoEnabled, setIsTwoEnabled] = useState(
     theme == 'dark' ? true : false,
   );
-
+  
+  // Dark mode
   function activateDarkMode() {
     if (theme == 'dark') {
       setTheme('light');
@@ -20,7 +22,8 @@ export default function Preferences() {
       setIsTwoEnabled(true);
     }
   }
-
+  
+  // Hide Status bar of application
   function hideStatusBar() {
     if (statusBar) {
       setStatusBar(false);

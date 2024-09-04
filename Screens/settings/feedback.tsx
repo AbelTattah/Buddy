@@ -15,14 +15,16 @@ import {db} from '../../firebase';
 import {userContext} from '../../store/user';
 import Colors from '../../Components/constants/Colors';
 
+// Component for collecting user feedback
 const Feedback = () => {
   const [emotion, setEmotion] = useState<string>('');
   const [suggestion, setSuggestion] = useState<string>();
   const [opacites, setOpacities] = useState<any[]>([1, 1, 1, 1]);
-
+  
   const {theme, name} = useContext(userContext);
   const [sending, setSending] = useState(false);
-
+  
+  // Set emoji opacities
   function setOpacity(indexx: number) {
     setOpacities(previous =>
       previous.map((item, index) => {
@@ -35,6 +37,7 @@ const Feedback = () => {
     );
   }
 
+  // Send user fendback to backend(firebase)
   async function sendFeedback() {
     setSending(true);
     try {

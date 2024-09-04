@@ -1,6 +1,7 @@
 import { createContext,useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Context for user
 export const userContext = createContext({
     siv:false,
     name: "",
@@ -18,7 +19,7 @@ export const userContext = createContext({
     setPdf:(pdf:string)=>{}
 })
 
-
+// Provider Component
 function UserContextProvider({children}:any) {
     const [siv,setSIV] = useState(false)
     const [name,setNAME] = useState("")
@@ -27,37 +28,46 @@ function UserContextProvider({children}:any) {
     const [theme,setTHEME] = useState("light")
     const [statusBar,setStatusbar] = useState(false)
     const [url,setURL] = useState("")
-
+    
+    // Current Download url or storage URL
     function setUrl(url:string){
         setURL(url)
     }
-
+    
+    // StatusBar 
     async function setStatusBar(value:boolean) {
         setStatusbar(value)
         await AsyncStorage.setItem("status",`${value}`)
     }
-
+    
+    // Global App theme
     async function setTheme(theme:string){
         setTHEME(theme)
         await AsyncStorage.setItem("theme",theme)
     }
-
+    
 
     function setSiv(sid:boolean){
         setSIV(sid)
     }
-
+    
+    // User's name
     function setName(name:string){
         setNAME(name)
     }
-
+    
+    // User Authentication Status
     function setAuthState(state:boolean) {
         setAUTHSTATE(state)
     }
 
+
+    // PDF url
     function setPdf(pdf:string) {
         setPDF(pdf)
     }
+
+    //Get theme setting from local storage
     async function getTheme(){
         const data = await AsyncStorage.getItem("theme")
         if (data==null) {
@@ -67,7 +77,8 @@ function UserContextProvider({children}:any) {
             setTHEME(data)
         }
     }
-
+    
+    // Get Status from local storage
     async function getStatus(){
         const data = await AsyncStorage.getItem("status")
         if (data==null) {
@@ -82,6 +93,7 @@ function UserContextProvider({children}:any) {
         }
     }
 
+    // Get theme and status on first render
     useEffect(()=>{
         getTheme()
         getStatus()

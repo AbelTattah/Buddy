@@ -2,15 +2,12 @@ import {
   View,
   Text,
   SafeAreaView,
-  TextInput,
   ScrollView,
   StyleSheet,
   Image,
   ActivityIndicator,
-  Touchable,
   TouchableOpacity,
   useWindowDimensions,
-  Button,
   RefreshControl,
 } from 'react-native';
 import {useEffect, useState} from 'react';
@@ -23,7 +20,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import DocumentNav from '../Documents/Document';
 import DocumentRenderer from '../Documents/DocumentRender';
 import axios from 'axios';
-import BookCard from '../Components/bookCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {FlatList} from 'react-native-gesture-handler';
 import {addToHistory} from './history';
@@ -36,6 +32,7 @@ const Stack = createStackNavigator();
 var images: any[] = [];
 var featuredImages: any[] = [];
 
+// Main Home Component
 const Main = ({navigation}) => {
   const {name, theme} = useContext(userContext);
   const [nameId, setName] = useState('');
@@ -643,7 +640,7 @@ const Home = ({navigation}) => {
           component={DocumentNav}
           options={({route}) => {
             return {
-              headerShown:false
+              headerShown: false,
             };
           }}
         />
@@ -692,7 +689,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginBottom: 0,
-    borderRadius:5
+    borderRadius: 5,
   },
   profilePic: {
     width: '100%',
@@ -718,7 +715,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     marginBottom: 10,
-    height:60,
+    height: 60,
     width: '100%',
     paddingTop: 10,
     borderBottomWidth: 0.3,

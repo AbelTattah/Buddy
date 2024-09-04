@@ -16,14 +16,14 @@ import {userContext} from '../store/user';
 import {useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../Components/constants/Colors';
-import PrimaryButton from '../Components/button';
+import PrimaryButton from '../Components/buttonPrimary';
 import PrimaryTextInput from '../Components/textinput';
 import {
   statusCodes,
   isErrorWithCode,
   GoogleSignin,
 } from '@react-native-google-signin/google-signin';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 GoogleSignin.configure();
 
@@ -49,7 +49,7 @@ export default function Login({navigation}: any) {
     '' | 'succ' | 'inp' | 'prob' | 'rnd' | 'prob1' | 'prob2'
   >('rnd'); // Registration state
 
-  const {theme} = useContext(userContext);
+  const [visible, setVisible] = useState<boolean>(false);
 
   // Sign in function
   async function signIn() {
@@ -114,7 +114,7 @@ export default function Login({navigation}: any) {
         context.setAuthState(true);
         context.setName(userInfo.user.name);
         setRegg('succ');
-        navigation.navigate('App1');
+        navigation.replace('App1');
       } catch (error) {}
     } catch (error) {
       Alert.alert('Error', error.message, [
@@ -190,9 +190,7 @@ export default function Login({navigation}: any) {
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         {regg === 'inp' ? (
           <>
-            <Text style={{color: 'black'}}>
-              Logging in ... <ActivityIndicator color="#2407f2" />
-            </Text>
+            <ActivityIndicator color="#2407f2" />
           </>
         ) : regg === 'prob' ? (
           <>
@@ -212,17 +210,40 @@ export default function Login({navigation}: any) {
           secure={false}
           email={false}
           inputMode="text"
-          placeholder=" Enter your Email"
+          placeholder="   Enter your Email"
           setter={async e => setEmaill(e)}
         />
-        <PrimaryTextInput
-          onSubmitEditing={signIn}
-          secure={false}
-          email={false}
-          inputMode="text"
-          placeholder=" Enter your password"
-          setter={async e => setPass(e)}
-        />
+        <View style={styles.password}>
+          <PrimaryTextInput
+            onSubmitEditing={signIn}
+            secure={!visible}
+            email={false}
+            inputMode="text"
+            placeholder="Enter your password"
+            setter={async e => setPass(e)}
+          />
+          <Text
+            style={{
+              marginRight: 10,
+            }}>
+            {visible ? (
+              <Icon
+                onPress={() => setVisible(false)}
+                name="visibility"
+                size={22}
+                color="#999"
+              />
+            ) : (
+              <Icon
+                onPress={() => setVisible(true)}
+                name="visibility-off"
+                size={22}
+                color="#999"
+              />
+            )}
+          </Text>
+        </View>
+
         <PrimaryButton
           radius={10}
           title="Login"
@@ -234,7 +255,7 @@ export default function Login({navigation}: any) {
         <TouchableOpacity onPress={googleSignIn} style={styles.google}>
           <Image
             source={require('../assets/google.png')}
-            style={{width: 30, height: 30}}
+            style={{width: 25, height: 25}}
           />
         </TouchableOpacity>
       </>
@@ -264,7 +285,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.primary200,
-    padding: 10,
+    padding: 5,
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 10,
@@ -280,5 +301,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '40%',
     marginBottom: 30,
+  },
+  password: {
+    width: '90%',
+    height: 60,
+    margin: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
   },
 });
