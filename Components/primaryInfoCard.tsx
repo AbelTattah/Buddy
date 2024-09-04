@@ -6,10 +6,10 @@ import Colors from './constants/Colors';
 /**
  *  PrimaryInfoCard Component
  *
- * @param {string} name Name of the person who posted the info
+ * @param {string} name Name of the book
  * @param {string} date Date for the post
  * @param {string} image Image uri for the post
- * @returns {ReactNode} A React Native element that renders a header
+ * @returns {ReactNode} A React Native element that renders a Card
  */
 
 interface PrimaryInfoCard {
@@ -24,6 +24,7 @@ interface PrimaryInfoCard {
   onLongPress?: () => void;
 }
 
+// PrimaryInfoCard Component
 function PrimaryInfoCard({
   name,
   date,
@@ -35,10 +36,6 @@ function PrimaryInfoCard({
   onPress,
   onLongPress,
 }: PrimaryInfoCard) {
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
-
   const {theme} = useContext(userContext);
 
   if (list) {

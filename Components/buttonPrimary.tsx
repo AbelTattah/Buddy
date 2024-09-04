@@ -18,6 +18,7 @@ interface PrimaryButton {
   pressHandler: () => {};
 }
 
+// Primary button Component for the App
 const PrimaryButton = ({title, size, radius, pressHandler}: PrimaryButton) => {
   return (
     <TouchableOpacity

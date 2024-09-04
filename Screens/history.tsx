@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {userContext} from '../store/user';
 import Colors from '../Components/constants/Colors';
 import Header from '../Components/header';
+import { useIsFocused } from '@react-navigation/native';
 
 // Get book history from local storage
 export const getHistory = async () => {
@@ -74,6 +75,7 @@ const Stack = createNativeStackNavigator();
 const HistMain = ({navigation}) => {
   const [history, setHistory] = useState<{}>({});
   const {setUrl, theme} = useContext(userContext);
+  const isFocused = useIsFocused()
 
   async function Load() {
     await getHistory().then(data => {
@@ -82,45 +84,34 @@ const HistMain = ({navigation}) => {
   }
 
   useEffect(() => {
-    Load();
-    setInterval(() => {
-      Load();
-    }, 3000);
-  }, []);
+    if (isFocused) {
+        console.log("yaya")
+        Load()
+    }
+  });
 
   return (
     <View
-      style={{
-        backgroundColor:
-          theme == 'light' ? Colors.primary200 : Colors.primary100,
-        flexDirection: 'column',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+      style={[
+        style.container,
+        {
+          backgroundColor:
+            theme == 'light' ? Colors.primary200 : Colors.primary100,
+        },
+      ]}>
       <View style={style.top}></View>
-      <View
-        style={{
-          height: '90%',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}>
+      <View style={style.subContainer}>
         {Object.keys(history).length == 0 && <Text>No recent Resources</Text>}
         {history ? (
           <>
             <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: '90%',
-                borderBottomWidth: 0.3,
-                borderBottomColor:
-                  theme == 'light' ? Colors.primary100 : Colors.primary200,
-                paddingBottom: 15,
-                marginBottom: 20,
-                alignItems: 'center',
-              }}>
+              style={[
+                style.historyView,
+                {
+                  borderBottomColor:
+                    theme == 'light' ? Colors.primary100 : Colors.primary200,
+                },
+              ]}>
               <Text
                 style={{
                   color:
@@ -163,11 +154,6 @@ const HistMain = ({navigation}) => {
                         console.log('URL: ', history[item]);
                         setUrl(history[item]);
                         navigation.navigate('View', {book: item});
-                        // if (marked.filter((name)=>name==item) == null) {
-                        //   setPdf(searchHistory(item));
-                        // } else {
-                        //   removeMarked(item);
-                        // }
                       }}
                       style={style.button1}>
                       <Text
@@ -254,6 +240,18 @@ const History = ({navigation}) => {
 export default History;
 
 const style = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subContainer: {
+    height: '90%',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   deleteButton: {
     position: 'absolute',
     top: 20,
@@ -291,5 +289,14 @@ const style = StyleSheet.create({
     color: '#000',
     paddingHorizontal: 10,
     paddingVertical: 0,
+  },
+  historyView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+    borderBottomWidth: 0.3,
+    paddingBottom: 15,
+    marginBottom: 20,
+    alignItems: 'center',
   },
 });

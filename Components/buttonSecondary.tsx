@@ -13,6 +13,7 @@ interface SecondaryButton {
   title: string;
 }
 
+// Secondary Button for the App
 export const SecondaryButton = ({pressHandler, title}: SecondaryButton) => {
   return (
     <TouchableOpacity onPress={pressHandler}>

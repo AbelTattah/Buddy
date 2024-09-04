@@ -78,6 +78,8 @@ export default function Login({navigation}: any) {
             context.setName(suds['SNAME']);
             setRegg('succ');
             navigation.navigate('App1');
+            setPass("")
+            setEmaill("")
           } else {
             setRegg('rnd');
             Alert.alert('Error', `${data.error.message}`, [
@@ -206,6 +208,7 @@ export default function Login({navigation}: any) {
           </>
         )}
         <PrimaryTextInput
+          value={emaill}
           onSubmitEditing={signIn}
           secure={false}
           email={false}
@@ -215,6 +218,7 @@ export default function Login({navigation}: any) {
         />
         <View style={styles.password}>
           <PrimaryTextInput
+            value={pass}
             onSubmitEditing={signIn}
             secure={!visible}
             email={false}
@@ -252,12 +256,12 @@ export default function Login({navigation}: any) {
             signIn();
           }}
         />
-        <TouchableOpacity onPress={googleSignIn} style={styles.google}>
+        {/* <TouchableOpacity onPress={googleSignIn} style={styles.google}>
           <Image
             source={require('../assets/google.png')}
             style={{width: 25, height: 25}}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text

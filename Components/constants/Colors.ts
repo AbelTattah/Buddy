@@ -1,3 +1,5 @@
+// Color constant Object
+
 const Colors = {
     primary100:"#000",
     primary200:"#fff",

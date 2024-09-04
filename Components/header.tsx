@@ -10,14 +10,15 @@ import {userContext} from '../store/user';
  * @returns {ReactNode} A React Native element that renders a header
  */
 
-interface HeaderProps {
+interface Header {
   title: string;
   sub: string;
   button: any;
   top?: any;
 }
 
-function Header({title, sub, button}: HeaderProps) {
+// Header Component
+function Header({title, sub, button}: Header) {
   const {theme} = useContext(userContext);
 
   return (

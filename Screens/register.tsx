@@ -77,8 +77,11 @@ export default function Register({navigation}: any) {
               context.setAuthState(true);
               context.setName(nameid);
               this.textInput1.clear();
+              setPass("")
+              setEmail("")
+              setNameid("")
             }, 3000);
-            //Navigate to login page
+            //Navigate to home screen
             setTimeout(() => {
               setEmail('');
               navigation.replace('App1');
@@ -148,6 +151,7 @@ export default function Register({navigation}: any) {
       <KeyboardAvoidingView style={styles.main} behavior="padding">
         {/* Sign up inputs */}
         <PrimaryTextInput
+          value={nameid}
           secure={false}
           email={false}
           inputMode="text"
@@ -158,6 +162,7 @@ export default function Register({navigation}: any) {
           }}
         />
         <PrimaryTextInput
+          value={email}
           placeholder="    Email"
           secure={false}
           email={false}
@@ -169,6 +174,7 @@ export default function Register({navigation}: any) {
         />
         <View style={styles.passWord}>
           <PrimaryTextInput
+            value={pass}
             onSubmitEditing={signUp}
             secure={!visible}
             email={false}

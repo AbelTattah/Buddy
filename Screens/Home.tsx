@@ -7,10 +7,9 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
-  useWindowDimensions,
   RefreshControl,
 } from 'react-native';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import React, {useContext} from 'react';
 import Colors from '../Components/constants/Colors';
 import {userContext} from '../store/user';
@@ -22,25 +21,21 @@ import DocumentRenderer from '../Documents/DocumentRender';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {FlatList} from 'react-native-gesture-handler';
-import {addToHistory} from './history';
-import {set} from 'firebase/database';
 import Detail from './home/detail';
 import PrimaryInfoCard from '../Components/primaryInfoCard';
-import Header from '../Components/header';
+import { bookSearch } from '../Utils/bookSearch';
 
 const Stack = createStackNavigator();
-var images: any[] = [];
-var featuredImages: any[] = [];
 
 // Main Home Component
-const Main = ({navigation}) => {
-  const {name, theme} = useContext(userContext);
-  const [nameId, setName] = useState('');
-  const [book, setBook] = useState<any[]>([]);
-  const [featured, setFeatured] = useState<any[]>([]);
+const Main = ({navigation}:any) => {
+  const {theme} = useContext(userContext);
+  const [book, setBook] = useState<{featured:[];explore:[]}>({
+    featured:[],
+    explore:[]
+  });
   const [loadingExplore, setLoadingExplore] = useState(false);
   const [loadingFeatured, setLoadingFeatured] = useState(false);
-  const [currentPdf, setCurrentPdf] = useState<string>('');
   const [limit, setLimit] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -48,288 +43,29 @@ const Main = ({navigation}) => {
   const [errorFeatured, setErrorFeatured] = useState(false);
 
   //Responsiveness
-  const {width, height} = useWindowDimensions();
+  //const {width, height} = useWindowDimensions();
 
-  //Pdf regex http://207.211.176.165/buddy
-  const test = /pdf/;
+  
   var count = 0;
 
   const [loading, setLoading] = useState(true);
-  const [genre, setGenre] = useState([
-    'AI',
-    'Science',
-    'Maths',
-    'Literature',
-    'History',
-    'Technology',
-    'Music',
-    'Dance',
-    'Sports',
-    'Cooking',
-    'Gardening',
-    'Crafts',
-    'DIY',
-  ]);
-  const [genreIcon, setGenreIcon] = useState([
-    <Icon name="brush-outline" size={22} color="#999" />,
-    <Icon name="flask-outline" size={22} color="#999" />,
-    <Icon name="pencil-outline" size={22} color="#999" />,
-    <Icon name="pencil-outline" size={22} color="#999" />,
-    <Icon name="time-outline" size={22} color="#999" />,
-    <Icon name="settings-outline" size={22} color="#999" />,
-    <Icon name="guitar-outline" size={22} color="#999" />,
-    <Icon name="footbal-outline" size={22} color="#999" />,
-    <Icon name="burger-outline" size={22} color="#999" />,
-    <Icon name="chevron-forward" size={22} color="#999" />,
-    <Icon name="chevron-forward" size={22} color="#999" />,
-    <Icon name="chevron-forward" size={22} color="#999" />,
-    <Icon name="chevron-forward" size={22} color="#999" />,
-  ]);
 
   const {setUrl} = useContext(userContext);
 
-  const changeGenre = async (bookCode: string, isfeatured: boolean) => {
-    if (isfeatured) {
-      setErrorFeatured(false);
-      setLoadingFeatured(true);
-      setFeatured([]);
-      featuredImages = [];
 
-      try {
-        const response = await axios.post(
-          'https://com.buddyyy.duckdns.org/geturl',
-          {
-            keywords: bookCode,
-          },
-        );
+  const  LoadBook = useCallback (()=>{
+  async (bookCode: string, isfeatured: boolean) => {
 
-        // Filter pdf endpoints
-        for (var v = 0; v < response.data.links.length; v++) {
-          if (test.test(response.data.links[v])) {
-            images.push(response.data.images[v]);
-            setFeatured(book => [
-              ...book,
-              {
-                endpoint: response.data.links[v],
-                title: response.data.titles[v],
-              },
-            ]);
-          }
-        }
-        count = 0;
-        setTimeout(() => setLoadingFeatured(false), 4000);
-      } catch (error) {
-        console.log(error);
-        setErrorFeatured(true);
-        setLoadingFeatured(false);
-        setTimeout(() => {
-          if (errorFeatured && count < 2) {
-            changeGenre(bookCode, isfeatured);
-          }
-        }, 2000);
-      }
-      return;
-    }
-
-    setErrorExplore(false);
-    setLoading(true);
-    setLoadingExplore(true);
-    setBook([]);
-    images = [];
-
-    try {
-      const response = await axios.post(
-        'https://com.buddyyy.duckdns.org/geturl',
-        {
-          keywords: bookCode,
-        },
-      );
-
-      // Filter pdf endpoints
-      for (var v = 0; v < response.data.links.length; v++) {
-        if (test.test(response.data.links[v])) {
-          images.push(response.data.images[v]);
-          setBook(book => [
-            ...book,
-            {
-              endpoint: response.data.links[v],
-              title: response.data.titles[v],
-              loading: false,
-            },
-          ]);
-        }
-      }
-      count = 0;
-      setLoading(false);
-      setTimeout(() => setLoadingExplore(false), 4000);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-      setErrorExplore(true);
-      setLoadingExplore(false);
-      setTimeout(() => {
-        count++;
-        if (errorExplore && count < 2) {
-          changeGenre(bookCode, isfeatured);
-        }
-      }, 2000);
-    }
   };
+ },[])
 
-  const initialLoad = async (bookCode: string, isfeatured: boolean) => {
-    if (isfeatured) {
-      setFeatured([]);
-      setLoading(true);
-      featuredImages = [];
-      setErrorFeatured(false);
-      setLoadingFeatured(true);
-      try {
-        const response = await axios.post(
-          'https://com.buddyyy.duckdns.org/geturl',
-          {
-            keywords: bookCode,
-          },
-        );
 
-        // Filter pdf endpoints
-        for (var v = 0; v < response.data.links.length; v++) {
-          if (test.test(response.data.links[v])) {
-            featuredImages.push(response.data.images[v]);
-            setFeatured(featured => [
-              ...featured,
-              {
-                endpoint: response.data.links[v],
-                title: response.data.titles[v],
-              },
-            ]);
-          }
-        }
-        count = 0;
-        setTimeout(() => setLoadingFeatured(false), 4000);
-      } catch (error) {
-        setErrorFeatured(true);
-        console.log(error);
-        setLoadingFeatured(false);
-        setTimeout(() => {
-          count++;
-          if (errorFeatured && count < 2) {
-            changeGenre(bookCode, isfeatured);
-          }
-        }, 2000);
-      }
-      return;
-    }
-
-    setBook([]);
-    images = [];
-    setErrorExplore(false);
-    setLoading(true);
-    setLoadingExplore(true);
-
-    try {
-      const response = await axios.post(
-        'https://com.buddyyy.duckdns.org/geturl',
-        {
-          keywords: bookCode,
-        },
-      );
-
-      // Filter pdf endpoints
-      for (var v = 0; v < response.data.links.length; v++) {
-        if (test.test(response.data.links[v])) {
-          images.push(response.data.images[v]);
-          setBook(book => [
-            ...book,
-            {
-              endpoint: response.data.links[v],
-              title: response.data.titles[v],
-              loading: false,
-            },
-          ]);
-        }
-      }
-      setLoading(false);
-      count = 0;
-      setTimeout(() => setLoadingExplore(false), 4000);
-    } catch (error) {
-      setErrorExplore(true);
-      setLoading(false);
-      console.log(error);
-      setLoadingExplore(false);
-      setTimeout(() => {
-        count++;
-        if (errorExplore && count < 2) {
-          initialLoad(bookCode, isfeatured);
-        }
-      }, 2000);
-    }
-  };
-
-  const update = async (bookCode: string, isfeatured: boolean) => {
-    setErrorExplore(false);
-    setUpdating(true);
-    try {
-      const response = await axios.post(
-        'https://com.buddyyy.duckdns.org/geturl',
-        {
-          keywords: bookCode,
-        },
-      );
-
-      for (var v = 0; v < response.data.links.length; v++) {
-        if (test.test(response.data.links[v])) {
-          images.push(response.data.images[v]);
-          setBook(book => [
-            ...book,
-            {
-              endpoint: response.data.links[v],
-              title: response.data.titles[v],
-              loading: false,
-            },
-          ]);
-        }
-      }
-
-      setLoading(false);
-      count = 0;
-      setTimeout(() => setUpdating(false), 2000);
-    } catch (error) {
-      setErrorExplore(true);
-      setLoading(false);
-
-      console.log(error);
-      setLoadingExplore(false);
-      setTimeout(() => setUpdating(false), 2000);
-      setTimeout(() => {
-        if (errorExplore && count > 2) {
-          update(bookCode, isfeatured);
-        }
-      }, 2000);
-    }
-  };
-
-  // Navigate to pdf view
-  const navigationHandler = () => {
-    setTimeout(() => {
-      if (
-        book[0]['title'] == 'Not found' ||
-        book[0]['title'] == 'An error occured'
-      ) {
-        return;
-      } else {
-        navigation.navigate('View', {
-          book: currentPdf,
-        });
-      }
-    }, 1000);
-  };
 
   useEffect(() => {
     let random = Math.floor(Math.random() * 6);
     let random2 = Math.floor(Math.random() * (12 - 6 + 1)) + 6;
-    setName(name);
-    initialLoad(genre[random], false);
-    initialLoad(genre[random2], true);
+    LoadBook(Genres[random], false);
+    LoadBook(Genres[random2], true);
   }, []);
 
   return (
@@ -378,9 +114,8 @@ const Main = ({navigation}) => {
               let random = Math.floor(Math.random() * 6);
               let random2 = Math.floor(Math.random() * 12);
               setLimit(false);
-              setName(name);
-              initialLoad(genre[random], false);
-              initialLoad(genre[random2], true);
+              initialLoad(Genres[random], false);
+              initialLoad(Genres[random2], true);
               setRefreshing(false);
             }}
           />
@@ -397,9 +132,7 @@ const Main = ({navigation}) => {
             if (book.length > 40) {
               setLimit(true);
             }
-            if (limit === false) {
-              update(genre[random], false);
-            }
+
           }
         }}
         showsVerticalScrollIndicator={false}
@@ -419,7 +152,7 @@ const Main = ({navigation}) => {
               style={styles.genres}
               showsHorizontalScrollIndicator={false}
               horizontal={true}>
-              {genre.map((item, i) => {
+              {Genres.map((item, i) => {
                 return (
                   <>
                     <GenreCard
@@ -497,7 +230,6 @@ const Main = ({navigation}) => {
                     onPress={() => {
                       let random = Math.floor(Math.random() * 6);
                       let random2 = Math.floor(Math.random() * 12);
-                      setName(name);
                       initialLoad(genre[random], false);
                       initialLoad(genre[random2], true);
                     }}>
@@ -562,7 +294,6 @@ const Main = ({navigation}) => {
                 onPress={() => {
                   let random = Math.floor(Math.random() * 6);
                   let random2 = Math.floor(Math.random() * 12);
-                  setName(name);
                   initialLoad(genre[random2], false);
                 }}>
                 <Text

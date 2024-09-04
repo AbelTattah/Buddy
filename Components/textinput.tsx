@@ -12,6 +12,7 @@ import {userContext} from '../store/user';
 
 interface PrimaryTextInput {
   placeholder: string;
+  value:any;
   setter: (e: any) => {};
   onSubmitEditing?: () => any;
   email: boolean;
@@ -19,7 +20,10 @@ interface PrimaryTextInput {
   secure: boolean;
 }
 
+
+// PrimaryTextInput Component
 export default function PrimaryTextInput({
+  value,
   placeholder,
   setter,
   onSubmitEditing,
@@ -27,10 +31,11 @@ export default function PrimaryTextInput({
   inputMode,
 }: PrimaryTextInput) {
   const {theme} = useContext(userContext);
-  const color = theme == 'light' ? Colors.primary100 : Colors.primary200;
+
   return (
     <TextInput
       spellCheck={false}
+      value={value}
       onChangeText={setter}
       onSubmitEditing={onSubmitEditing}
       secureTextEntry={secure}
